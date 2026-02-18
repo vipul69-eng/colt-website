@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How It Works — COLT</title>
+  <meta name="description" content="Deep technical breakdown of COLT's five-phase pipeline.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <nav class="navbar"><div class="nav-inner">
+    <a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a>
+    <div class="nav-links"><a href="index.html">Home</a><a href="product.html" class="active">How It Works</a><a href="docs.html">Docs</a><a href="about.html">About</a></div>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
+      <a href="index.html#waitlist" class="btn btn-primary" style="padding:8px 18px;font-size:.82rem;">Join Waitlist</a>
+      <button class="mobile-btn" id="mobile-btn" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div></nav>
+  <div class="mobile-nav" id="mobile-nav"><a href="index.html">Home</a><a href="product.html">How It Works</a><a href="docs.html">Docs</a><a href="about.html">About</a><button class="theme-toggle" id="mobile-theme-toggle" style="align-self:flex-start;margin-top:12px;"></button></div>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="badge fade-up d1">Architecture Deep Dive</div>
+      <h1 class="fade-up d2">How COLT <span class="text-gradient">works</span></h1>
+      <p class="fade-up d3">A pipeline that transforms natural language into verified browser execution.</p>
+    </div>
+  </section>
+
+  <!-- Phase 1: Discovery -->
+  <section class="arch-section"><div class="container"><div class="arch-grid reveal">
+    <div class="arch-text">
+      <div class="badge">Phase 1</div>
+      <h3>Discovery &mdash;</h3>
+      <p>Crawls your application via Playwright, discovers every interactable element, verifies visibility via <code>getBoundingClientRect()</code> + CSS checks, generates natural language descriptions.</p>
+      <ul>
+        <li>Finds <code>input</code>, <code>button</code>, <code>a[href]</code>, ARIA roles, <code>[data-testid]</code>, <code>summary</code></li>
+        <li>Runs 7 hidden UI strategies (timed, keyboard, context menus, etc.)</li>
+        <li>Selector cascade: <code>#id</code> &rarr; <code>[data-testid]</code> &rarr; <code>[name]</code> &rarr; <code>[aria-label]</code> &rarr; <code>[title]</code></li>
+      </ul>
+    </div>
+    <div><div class="terminal"><div class="terminal-header"><div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div><span class="terminal-title">colt discover</span></div><div class="terminal-body">
+<span class="prompt">$</span> <span class="cmd">colt discover</span> <span class="flag">--config</span> <span class="str">colt.yaml</span>
+
+<span class="inf">. sensory</span> <span class="out">Crawling http://localhost:3000</span>
+<span class="inf">. sensory</span> <span class="out">Discovered 12 pages</span>
+
+<span class="out">  /dashboard        -- 23 elements</span>
+<span class="out">  /settings         -- 41 elements</span>
+<span class="out">  /settings/billing -- 18 elements</span>
+
+<span class="inf">. index</span>  <span class="out">Generating embeddings (all-MiniLM-L6-v2)</span>
+<span class="inf">. index</span>  <span class="out">Indexed 847 vectors in ChromaDB</span>
+<span class="ok">  Discovery complete</span> <span class="out">(34s)</span>
+    </div></div></div>
+  </div></div></section>
+
+  <!-- Phase 2: Search -->
+  <section class="arch-section"><div class="container"><div class="arch-grid rev reveal">
+    <div><div class="terminal"><div class="terminal-header"><div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div><span class="terminal-title">colt search</span></div><div class="terminal-body">
+<span class="prompt">$</span> <span class="cmd">colt search</span> <span class="str">"how to change password"</span>
+
+<span class="inf">. search</span> <span class="out">Embedding query, cosine similarity</span>
+
+<span class="ok">1.</span> <span class="str">/settings/security</span> <span class="out">(0.91)</span>
+   <span class="cmt">HOW TO: Navigate to Settings > Security</span>
+   <span class="cmt">> Click "Change Password" button</span>
+
+<span class="ok">2.</span> <span class="str">/settings</span> <span class="out">(0.72)</span>
+   <span class="cmt">Settings hub with links to Security</span>
+    </div></div></div>
+    <div class="arch-text">
+      <div class="badge">Phase 2</div>
+      <h3>Semantic Search</h3>
+      <p>Queries ChromaDB with cosine similarity. Returns target URL, how-to context, and similarity scores. No need to specify which page a task runs on.</p>
+      <div class="spec-grid">
+        <div class="spec"><div class="spec-label">Embedding</div><div class="spec-val">all-MiniLM-L6-v2</div></div>
+        <div class="spec"><div class="spec-label">Storage</div><div class="spec-val">ChromaDB</div></div>
+        <div class="spec"><div class="spec-label">Metric</div><div class="spec-val">Cosine similarity</div></div>
+        <div class="spec"><div class="spec-label">Doc types</div><div class="spec-val">Page purpose + How-to</div></div>
+      </div>
+    </div>
+  </div></div></section>
+
+  <!-- Phase 3: ReAct -->
+  <section class="arch-section"><div class="container"><div class="arch-grid reveal">
+    <div class="arch-text">
+      <div class="badge">Phase 3</div>
+      <h3>ReAct Execution &mdash;</h3>
+      <p>1,553 lines. Iterative Observe-Reason-Act loop. Each iteration captures live DOM, compresses to 3,500 tokens, executes one action, validates.</p>
+      <div class="spec-grid">
+        <div class="spec"><div class="spec-label">Max iterations</div><div class="spec-val">25</div></div>
+        <div class="spec"><div class="spec-label">LLM call limit</div><div class="spec-val">30 (hard abort)</div></div>
+        <div class="spec"><div class="spec-label">Token budget</div><div class="spec-val">3,500 per observation</div></div>
+        <div class="spec"><div class="spec-label">Loop detection</div><div class="spec-val">1, 2, 3-step semantic</div></div>
+      </div>
+    </div>
+    <div><div class="terminal"><div class="terminal-header"><div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div><span class="terminal-title">react loop</span></div><div class="terminal-body">
+<span class="wrn">. iter 3</span> <span class="inf">OBSERVE</span>
+<span class="out">  overlay: dialog (aria-modal="true")</span>
+<span class="out">  14 visible elements</span>
+<span class="out">  tokens: 1,847 / 3,500 budget</span>
+
+<span class="wrn">. iter 3</span> <span class="inf">REASON</span>
+<span class="out">  Fill street field with "456 Oak St"</span>
+
+<span class="wrn">. iter 3</span> <span class="inf">ACT</span>
+<span class="out">  fill -> input[name="street"]</span>
+<span class="ok">  filled successfully</span>
+    </div></div></div>
+  </div></div></section>
+
+  <!-- Phase 4: COLT App -->
+  <section class="arch-section"><div class="container"><div class="arch-grid rev reveal">
+    <div><div class="terminal"><div class="terminal-header"><div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div><span class="terminal-title">billing_monitor.py</span></div><div class="terminal-body">
+<span class="cmt"># Auto-generated by COLT App</span>
+<span class="cmt"># Context: /billing/invoices</span>
+
+<span class="kw">from</span> <span class="out">playwright.sync_api</span> <span class="kw">import</span> <span class="out">sync_playwright</span>
+
+<span class="kw">def</span> <span class="out">monitor_overdue</span>(config):
+    page.goto(config[<span class="str">"base_url"</span>] + <span class="str">"/billing/invoices"</span>)
+    page.click(<span class="str">'[data-testid="status-filter"]'</span>)
+    page.click(<span class="str">'[data-value="overdue"]'</span>)
+    rows = page.query_selector_all(<span class="str">"tbody tr"</span>)
+    <span class="kw">return</span> [extract(r) <span class="kw">for</span> r <span class="kw">in</span> rows]
+    </div></div></div>
+    <div class="arch-text">
+      <div class="badge"><span class="badge-dot"></span> COLT App</div>
+      <h3>Context-Aware Code Generation</h3>
+      <p>Describe your agent in natural language. The COLT App resolves pages and elements from the semantic index, generates standalone Python with real selectors and fallback chains.</p>
+      <ul>
+        <li>Every selector comes from the discovered index &mdash; not placeholders</li>
+        <li>Exported agents are standalone &mdash; no COLT runtime needed</li>
+        <li>Inherits multi-strategy fallback chains and error handling</li>
+        <li>Drop into CI/CD, cron jobs, or your own codebase</li>
+      </ul>
+    </div>
+  </div></div></section>
+
+  <!-- Phase 5: Verification -->
+  <section class="arch-section"><div class="container"><div class="arch-grid reveal">
+    <div class="arch-text">
+      <div class="badge">Phase 5</div>
+      <h3>Success Verification</h3>
+      <p>After execution, COLT verifies task completion via 13 CSS selectors targeting common success patterns, plus Tailwind toast class detection. Catches both explicit confirmations and implicit state changes.</p>
+      <div class="spec-grid">
+        <div class="spec"><div class="spec-label">CSS selectors</div><div class="spec-val">13 success patterns</div></div>
+        <div class="spec"><div class="spec-label">Toast detection</div><div class="spec-val">Tailwind classes</div></div>
+        <div class="spec"><div class="spec-label">Typical cost</div><div class="spec-val">$0.002 &ndash; $0.01</div></div>
+        <div class="spec"><div class="spec-label">Typical time</div><div class="spec-val">5&ndash;8 iterations</div></div>
+      </div>
+    </div>
+    <div><div class="terminal"><div class="terminal-header"><div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div><span class="terminal-title">verification</span></div><div class="terminal-body">
+<span class="wrn">. iter 5</span> <span class="inf">ACT</span>
+<span class="out">  click -> button:has-text("Save")</span>
+
+<span class="inf">. verify</span> <span class="out">Checking success patterns...</span>
+<span class="ok">  Match:</span> <span class="str">.toast-success</span> <span class="out">"Address updated"</span>
+<span class="ok">  Match:</span> <span class="str">[role="alert"]</span> <span class="out">text confirms change</span>
+
+<span class="ok">  Task complete</span>
+<span class="out">  5 iterations | 7 LLM calls | $0.003</span>
+    </div></div></div>
+  </div></div></section>
+
+  <section class="cta-section"><div class="container reveal">
+    <h2>Ready to build <span class="text-gradient">smarter agents?</span></h2>
+    <p>Join the waitlist for early access.</p>
+    <div class="cta-actions">
+      <a href="index.html#waitlist" class="btn btn-primary btn-lg">Join Waitlist</a>
+      <a href="docs.html" class="btn btn-secondary btn-lg">Read the Docs</a>
+    </div>
+  </div></section>
+
+  <footer class="footer"><div class="container"><div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a><p>Autonomous browser execution engine for building intelligent web agents.</p></div>
+    <div class="footer-col"><h4>Product</h4><a href="product.html">How It Works</a><a href="docs.html">Documentation</a></div>
+    <div class="footer-col"><h4>Project</h4><a href="about.html">About</a><a href="index.html#waitlist">Join Waitlist</a></div>
+    <div class="footer-col"><h4>Resources</h4><a href="docs.html#quickstart">Quickstart</a><a href="docs.html#architecture">Architecture</a></div>
+  </div><div class="footer-bottom"><span>COLT &mdash; Autonomous Browser Execution Engine</span><a href="index.html#waitlist">Join Waitlist</a></div></div></footer>
+  <script src="js/supabase.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

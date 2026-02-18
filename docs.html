@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — COLT</title>
+  <meta name="description" content="COLT docs: access, configuration, usage, code generation, and architecture reference.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <nav class="navbar"><div class="nav-inner">
+    <a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a>
+    <div class="nav-links"><a href="index.html">Home</a><a href="product.html">How It Works</a><a href="docs.html" class="active">Docs</a><a href="about.html">About</a></div>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
+      <a href="index.html#waitlist" class="btn btn-primary" style="padding:8px 18px;font-size:.82rem;">Join Waitlist</a>
+      <button class="mobile-btn" id="mobile-btn" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div></nav>
+  <div class="mobile-nav" id="mobile-nav"><a href="index.html">Home</a><a href="product.html">How It Works</a><a href="docs.html">Docs</a><a href="about.html">About</a><button class="theme-toggle" id="mobile-theme-toggle" style="align-self:flex-start;margin-top:12px;"></button></div>
+
+  <div class="container docs-layout">
+    <aside class="docs-side">
+      <!-- Smart Search -->
+      <div class="docs-search-wrap">
+        <svg class="docs-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="docs-search" id="docs-search" placeholder="Search docs..." autocomplete="off">
+        <kbd class="docs-search-kbd">/</kbd>
+      </div>
+      <div id="docs-search-results" class="docs-search-results" style="display:none;"></div>
+      <div id="docs-nav">
+        <h4>Getting Started</h4>
+        <a href="#access" class="active">Get Access</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="#config">Configuration</a>
+        <h4>Usage</h4>
+        <a href="#discover">Discovery</a>
+        <a href="#execute">Execution</a>
+        <a href="#react-mode">ReAct Mode</a>
+        <a href="#search">Search</a>
+        <a href="#colt-app">COLT App</a>
+        <h4>Architecture</h4>
+        <a href="#architecture">Overview</a>
+        <a href="#sensory">Sensory Engine</a>
+        <a href="#selectors">Selectors</a>
+        <h4>Reference</h4>
+        <a href="#best-practices">Best Practices</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+      </div>
+    </aside>
+
+    <main class="docs-main">
+      <h1>COLT Documentation</h1>
+      <p>Build browser agents that understand your web application. This guide covers access, configuration, usage, and architecture.</p>
+
+      <!-- GET ACCESS -->
+      <h2 id="access">Get Access</h2>
+      <p>COLT is currently in private beta. Join the waitlist for early access.</p>
+      <div class="wl-card" id="docs-wl-card">
+        <h3 id="docs-wl-title">Join the Waitlist</h3>
+        <p id="docs-wl-desc">We are onboarding teams in batches. Sign up to receive credentials when your spot opens.</p>
+        <form class="wl-card-form" id="docs-wl-form">
+          <input type="email" id="docs-wl-email" placeholder="you@company.com" required>
+          <button type="submit" class="btn btn-primary" id="docs-wl-btn">Request Access</button>
+        </form>
+        <p class="wl-note">Already have access? Skip to <a href="#quickstart" style="color:var(--text-accent)">Quickstart</a>.</p>
+      </div>
+
+      <!-- QUICKSTART -->
+      <h2 id="quickstart">Quickstart</h2>
+      <p>Once you have access, get COLT running in under five minutes.</p>
+      <ol>
+        <li>Install the COLT package using your access credentials</li>
+        <li>Create a <code>colt.yaml</code> configuration file</li>
+        <li>Run discovery on your application</li>
+        <li>Execute your first task</li>
+      </ol>
+<pre class="code-block"><span class="cmt"># Install COLT (requires access credentials)</span>
+pip install colt-agent
+playwright install chromium
+
+<span class="cmt"># Create config</span>
+colt init
+<span class="cmt"># Edit colt.yaml with your app's base URL and LLM provider</span>
+
+<span class="cmt"># Discover your application</span>
+colt discover --config colt.yaml
+
+<span class="cmt"># Execute a task</span>
+colt execute --react "Update the billing address to 456 Oak St, Denver CO 80202"</pre>
+
+      <!-- CONFIGURATION -->
+      <h2 id="config">Configuration</h2>
+      <p>COLT uses a YAML configuration file. Run <code>colt init</code> to generate a starter config.</p>
+<pre class="code-block"><span class="cmt"># colt.yaml</span>
+<span class="key">project</span>:
+  <span class="key">name</span>: <span class="str">"my-app"</span>
+  <span class="key">base_url</span>: <span class="str">"http://localhost:3000"</span>
+  <span class="key">output_dir</span>: <span class="str">"./colt-output"</span>
+
+<span class="key">llm</span>:
+  <span class="key">provider</span>: <span class="str">"groq"</span>      <span class="cmt"># or "openai", "ollama"</span>
+  <span class="key">model</span>: <span class="str">"llama-3.3-70b-versatile"</span>
+  <span class="key">api_key_env</span>: <span class="str">"GROQ_API_KEY"</span>
+
+<span class="key">browser</span>:
+  <span class="key">headless</span>: <span class="val">true</span></pre>
+      <div class="callout"><p><strong>Note:</strong> The <code>api_key_env</code> field references an environment variable name, not the key itself. Set your key with: <code>export GROQ_API_KEY="your-key"</code></p></div>
+
+      <h3>Supported LLM Providers</h3>
+      <p>Groq (fast, recommended for dev), OpenAI, Ollama (local, no API key), or any OpenAI-compatible API.</p>
+
+      <!-- DISCOVERY -->
+      <h2 id="discover">Discovery</h2>
+      <p>The <code>discover</code> command crawls your target application, discovers all interactable elements via <code>sensory.py</code>, generates descriptions, and indexes them into ChromaDB.</p>
+<pre class="code-block">colt discover --config colt.yaml</pre>
+      <p>Generates page purpose documents and how-to documents as vector embeddings. Also runs 7 hidden UI discovery strategies: timed UI, contextual UI, keyboard shortcuts, context menus, scroll-loaded content, conditional UI, and lazy-loaded tabs.</p>
+
+      <!-- EXECUTION -->
+      <h2 id="execute">Execution</h2>
+      <p>Two modes: planner (static, single LLM call) and ReAct (autonomous, iterative).</p>
+<pre class="code-block"><span class="cmt"># Planner mode (simple tasks)</span>
+colt execute "Update the billing address to 456 Oak St"
+
+<span class="cmt"># ReAct mode (recommended for most tasks)</span>
+colt execute --react "Change the admin email to admin@newdomain.com"</pre>
+
+      <h3 id="react-mode">ReAct Mode</h3>
+      <p>Iterative Observe-Reason-Act loop. Handles unexpected modals, loading states, error conditions. Max 25 iterations, 30 LLM calls hard abort. 3,500-token observation budget per iteration. 1-2-3 step semantic loop detection prevents repetition.</p>
+
+      <!-- SEARCH -->
+      <h2 id="search">Search</h2>
+      <p>Query the semantic index directly without executing a task:</p>
+<pre class="code-block">colt search "how to change password"</pre>
+      <p>Returns ranked results with similarity scores, target URLs, and how-to context. Useful for debugging index quality.</p>
+
+      <!-- COLT APP -->
+      <h2 id="colt-app">COLT App</h2>
+      <p>Generate production-ready agent code using your semantic index as context. The app resolves relevant pages and elements, then outputs a standalone Python script.</p>
+<pre class="code-block"><span class="cmt"># Generate an agent from a natural language description</span>
+colt app generate "Monitor billing for overdue invoices and extract amounts"
+
+<span class="cmt"># Output: agents/billing_monitor.py</span>
+<span class="cmt"># Includes: navigation, selector cascade, fallback chains, error handling</span></pre>
+
+      <h3>How context resolution works</h3>
+      <p>Queries ChromaDB to identify which pages and elements are relevant. Resolves selectors from the discovery-time cascade. Maps navigation paths between pages. Generated code uses actual selectors from your application &mdash; not placeholders.</p>
+
+      <h3>Exporting agents</h3>
+      <p>Generated agents are standalone Python scripts using Playwright directly. No COLT runtime needed. Drop them into CI/CD, cron jobs, or import into your code:</p>
+<pre class="code-block"><span class="cmt"># Run directly</span>
+python agents/billing_monitor.py
+
+<span class="cmt"># Or import into your code</span>
+<span class="kw">from</span> agents.billing_monitor <span class="kw">import</span> monitor_overdue
+result = monitor_overdue(config)</pre>
+
+      <!-- ARCHITECTURE -->
+      <h2 id="architecture">Architecture Overview</h2>
+      <p>Five-phase pipeline: Discover, Index, Search, Execute, Verify. Three core modules: <code>sensory.py</code>, <code>planner.py</code>, and <code>react.py</code> (1,553 lines).</p>
+
+      <h3 id="sensory">Sensory Engine</h3>
+      <p>Discovers standard form elements (<code>input</code>, <code>textarea</code>, <code>select</code>), interactive elements (<code>button</code>, <code>a[href]</code>, <code>[onclick]</code>), ARIA role elements, test identifiers (<code>[data-testid]</code>), and disclosure elements (<code>summary</code>). Visibility verified via <code>getBoundingClientRect()</code> plus CSS property checks.</p>
+
+      <h3 id="selectors">Selector Cascade</h3>
+      <p>Priority: <code>#id</code> (with CSS.escape) &rarr; <code>[data-testid]</code> &rarr; <code>[name]</code> &rarr; <code>[aria-label]</code> &rarr; <code>[title]</code>. All selectors use <code>CSS.escape()</code> for special characters. Shadow DOM uses <code>&gt;&gt;</code> piercing; iframes use <code>&gt;&gt;&gt;</code> boundary notation.</p>
+
+      <!-- BEST PRACTICES -->
+      <h2 id="best-practices">Best Practices</h2>
+      <p>Run discovery after significant UI changes to keep the semantic index fresh. Use ReAct mode for tasks involving modals, multi-step workflows, or dynamic UI. Planner mode works for simple, predictable tasks. Write specific, descriptive task instructions. For dev, Groq with <code>llama-3.3-70b-versatile</code> is the best speed-accuracy balance.</p>
+
+      <!-- TROUBLESHOOTING -->
+      <h2 id="troubleshooting">Troubleshooting</h2>
+      <h3>Discovery finds 0 elements</h3>
+      <p>Ensure your app is running at <code>base_url</code>. Check Playwright can launch Chromium. Handle authentication/cookies if required.</p>
+      <h3>ReAct loop exhausts iterations</h3>
+      <p>Task description may be too vague, semantic index may be stale, or target UI may require unsupported interactions. Re-run discovery and use more specific descriptions.</p>
+      <h3>Selectors fail to match</h3>
+      <p>If your app uses dynamic IDs, add <code>data-testid</code>, <code>name</code>, or <code>aria-label</code> attributes to key elements. Re-run discovery after attribute changes.</p>
+    </main>
+  </div>
+
+  <footer class="footer"><div class="container"><div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a><p>Autonomous browser execution engine for building intelligent web agents.</p></div>
+    <div class="footer-col"><h4>Product</h4><a href="product.html">How It Works</a><a href="docs.html">Documentation</a></div>
+    <div class="footer-col"><h4>Project</h4><a href="about.html">About</a><a href="index.html#waitlist">Join Waitlist</a></div>
+    <div class="footer-col"><h4>Resources</h4><a href="docs.html#quickstart">Quickstart</a><a href="docs.html#architecture">Architecture</a></div>
+  </div><div class="footer-bottom"><span>COLT &mdash; Autonomous Browser Execution Engine</span><a href="index.html#waitlist">Join Waitlist</a></div></div></footer>
+  <script src="js/supabase.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — COLT</title>
+  <meta name="description" content="The mission behind COLT: closing the gap between intent and execution for browser agents.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <nav class="navbar"><div class="nav-inner">
+    <a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a>
+    <div class="nav-links"><a href="index.html">Home</a><a href="product.html">How It Works</a><a href="docs.html">Docs</a><a href="about.html" class="active">About</a></div>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
+      <a href="index.html#waitlist" class="btn btn-primary" style="padding:8px 18px;font-size:.82rem;">Join Waitlist</a>
+      <button class="mobile-btn" id="mobile-btn" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div></nav>
+  <div class="mobile-nav" id="mobile-nav"><a href="index.html">Home</a><a href="product.html">How It Works</a><a href="docs.html">Docs</a><a href="about.html">About</a><button class="theme-toggle" id="mobile-theme-toggle" style="align-self:flex-start;margin-top:12px;"></button></div>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="badge fade-up d1">About COLT</div>
+      <h1 class="fade-up d2">Closing the gap between <span class="text-gradient">intent and execution</span></h1>
+      <p class="fade-up d3">Browser agents should understand applications the way humans do &mdash; semantically, adaptively, and autonomously.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="about-content reveal">
+      <h2>The Problem</h2>
+      <p>Every browser automation tool today requires you to write explicit selectors and script every interaction. When the UI changes, the scripts break. When a modal appears, the scripts fail. When content loads dynamically, the scripts time out.</p>
+      <p class="highlight-text">The gap between what you want an agent to do and what you have to code for it to work is enormous.</p>
+      <p>COLT eliminates that gap. It gives your agents a semantic understanding of any web application &mdash; what pages exist, what each element does, how to accomplish tasks &mdash; and an autonomous execution engine that adapts to live browser state.</p>
+
+      <h2>The Approach</h2>
+      <p>Discovery first. COLT crawls your application, discovers every interactable element, and indexes it semantically. This gives agents a map of your UI before they ever try to interact with it.</p>
+      <p>The execution engine implements a ReAct loop that observes live browser state, reasons about what to do, executes one action, and validates the result. It handles modals, loading states, errors, and recovery without pre-scripting.</p>
+      <p>The COLT App extends this by generating production-ready agent code that is fully context-aware. Describe what your agent should do, and the app produces standalone Python scripts with real selectors and fallback chains from the discovered UI. No COLT runtime required.</p>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header text-center reveal"><h2>Design Principles</h2></div>
+      <div class="values-grid">
+        <div class="value-card reveal reveal-d1">
+          <h4>Discovery over assumption</h4>
+          <p>Never assume the UI structure. Always crawl, discover, index, then act on what actually exists.</p>
+        </div>
+        <div class="value-card reveal reveal-d2">
+          <h4>Autonomy with guardrails</h4>
+          <p>The ReAct loop adapts in real time, but hard limits (25 iterations, 30 LLM calls) prevent runaway execution.</p>
+        </div>
+        <div class="value-card reveal reveal-d3">
+          <h4>Resilience by default</h4>
+          <p>Every interaction has a fallback chain. Every selector uses CSS.escape(). Nothing is fragile by design.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="about-content">
+      <div class="reveal">
+        <h2>Roadmap</h2>
+        <div class="roadmap-list">
+          <div class="rm-item"><span class="rm-status rm-shipped">Shipped</span><div class="rm-text"><h4>Semantic discovery and indexing</h4><p>Playwright crawl, sensory.py, ChromaDB embedding, all-MiniLM-L6-v2.</p></div></div>
+          <div class="rm-item"><span class="rm-status rm-shipped">Shipped</span><div class="rm-text"><h4>ReAct autonomous execution</h4><p>Observe-Reason-Act cycle with loop detection, cost tracking, success verification.</p></div></div>
+          <div class="rm-item"><span class="rm-status rm-shipped">Shipped</span><div class="rm-text"><h4>Shadow DOM + iframe traversal</h4><p>Recursive shadow root walk, Playwright piercing, CDP cross-origin iframes.</p></div></div>
+          <div class="rm-item"><span class="rm-status rm-shipped">Shipped</span><div class="rm-text"><h4>7 hidden UI discovery strategies</h4><p>Timed UI, contextual, keyboard shortcuts, context menus, scroll, conditional, lazy tabs.</p></div></div>
+          <div class="rm-item"><span class="rm-status rm-shipped">Shipped</span><div class="rm-text"><h4>COLT App &mdash; context-aware code generation</h4><p>Generate export-ready agent code using the semantic index. Standalone Python with real selectors.</p></div></div>
+          <div class="rm-item"><span class="rm-status rm-planned">Planned</span><div class="rm-text"><h4>Multi-page task chaining</h4><p>Execute tasks spanning multiple pages with state carried across navigations.</p></div></div>
+          <div class="rm-item"><span class="rm-status rm-planned">Planned</span><div class="rm-text"><h4>Authentication flow support</h4><p>Cookie injection, OAuth redirect handling, session persistence.</p></div></div>
+          <div class="rm-item"><span class="rm-status rm-planned">Planned</span><div class="rm-text"><h4>Visual regression detection</h4><p>Screenshot comparison per iteration for debugging and audit trails.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section"><div class="container reveal">
+    <h2>Build agents that <span class="text-gradient">understand.</span></h2>
+    <p>Join the waitlist for early access to COLT.</p>
+    <div class="cta-actions">
+      <a href="index.html#waitlist" class="btn btn-primary btn-lg">Join Waitlist</a>
+      <a href="docs.html" class="btn btn-secondary btn-lg">Read the Docs</a>
+    </div>
+  </div></section>
+
+  <footer class="footer"><div class="container"><div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a><p>Autonomous browser execution engine for building intelligent web agents.</p></div>
+    <div class="footer-col"><h4>Product</h4><a href="product.html">How It Works</a><a href="docs.html">Documentation</a></div>
+    <div class="footer-col"><h4>Project</h4><a href="about.html">About</a><a href="index.html#waitlist">Join Waitlist</a></div>
+    <div class="footer-col"><h4>Resources</h4><a href="docs.html#quickstart">Quickstart</a><a href="docs.html#architecture">Architecture</a></div>
+  </div><div class="footer-bottom"><span>COLT &mdash; Autonomous Browser Execution Engine</span><a href="index.html#waitlist">Join Waitlist</a></div></div></footer>
+  <script src="js/supabase.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
