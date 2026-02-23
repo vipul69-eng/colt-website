@@ -1,311 +1,205 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COLT — Autonomous Browser Execution Engine</title>
-  <meta name="description" content="Build browser agents that understand your website. Discover, index, execute, export.">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/pages.css">
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COLT — Architecture Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{
+  --bg:#fff;--bg-card:#f8f9fb;--border:#dfe2ea;--border-a:#b4b9ff;
+  --text:#111318;--text-2:#3d4152;--text-3:#6c7189;--text-4:#9ea3b5;
+  --accent:#4f46e5;--accent-bg:#eef0ff;--tag-bg:#f3f4f6;
+  --input-bg:#f4f5f7;--input-bd:#111318;--kb-bg:#f6f5ff;--kb-bd:#c7c3f9;
+  --shadow:0 1px 3px rgba(0,0,0,.05);--shadow-h:0 3px 10px rgba(0,0,0,.07);
+  --tog-bg:#e5e7eb;--tog-dot:#fff;--arr:#c8ccd6;--arr-a:#4f46e5;
+}
+[data-theme="dark"]{
+  --bg:#0f1117;--bg-card:#181a24;--border:#2a2d3d;--border-a:#5b54c9;
+  --text:#edeef2;--text-2:#b4b8c8;--text-3:#7e839a;--text-4:#555a70;
+  --accent:#8b83f5;--accent-bg:#1e1b3a;--tag-bg:#1e2130;
+  --input-bg:#181a24;--input-bd:#edeef2;--kb-bg:#1a1735;--kb-bd:#4a44a0;
+  --shadow:0 1px 3px rgba(0,0,0,.25);--shadow-h:0 3px 10px rgba(0,0,0,.35);
+  --tog-bg:#2a2d3d;--tog-dot:#edeef2;--arr:#3a3e52;--arr-a:#8b83f5;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);display:flex;justify-content:center;min-height:100vh;padding:36px 24px 48px;transition:background .3s,color .3s}
+.pg{max-width:960px;width:100%}
+
+/* Toggle */
+.topbar{display:flex;justify-content:flex-end;margin-bottom:24px}
+.tog{display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;font-size:11.5px;font-weight:600;color:var(--text-3);letter-spacing:.03em}
+.tog-track{width:38px;height:20px;background:var(--tog-bg);border-radius:10px;position:relative;transition:background .3s}
+.tog-dot{width:14px;height:14px;background:var(--tog-dot);border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .3s;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+[data-theme="dark"] .tog-dot{transform:translateX(18px)}
+[data-theme="dark"] .tog-track{background:var(--accent)}
+
+/* Header */
+.hdr{margin-bottom:24px}
+.hdr-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);border:1.5px solid var(--border-a);border-radius:5px;padding:3px 10px}
+.hdr h2{font-size:24px;font-weight:800;line-height:1.25;margin-bottom:6px}
+.hdr h2 span{color:var(--accent)}
+.hdr p{font-size:13.5px;color:var(--text-3);line-height:1.6;max-width:700px}
+
+/* Positioning tags */
+.tags{display:flex;gap:8px;margin-bottom:24px}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 13px;border-radius:100px;border:1.5px solid var(--border);color:var(--text-3);background:var(--tag-bg)}
+.tag.hi{border-color:var(--border-a);color:var(--accent);background:var(--accent-bg)}
+
+/* Input box */
+.in-box{border:2px solid var(--input-bd);border-radius:9px;padding:13px 18px;background:var(--input-bg);margin-bottom:4px}
+.in-box .lb{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-4);margin-bottom:2px}
+.in-box .vl{font-size:13.5px;font-weight:600;color:var(--text)}
+
+/* Connector */
+.cn{display:flex;justify-content:center;padding:4px 0}
+
+/* Grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
+
+/* Card */
+.cd{border:1.5px solid var(--border);border-radius:9px;padding:16px 18px;background:var(--bg-card);box-shadow:var(--shadow);transition:border-color .2s,box-shadow .2s,transform .15s}
+.cd:hover{border-color:var(--border-a);box-shadow:var(--shadow-h);transform:translateY(-1px)}
+.cd .nm{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#fff;background:var(--accent);border-radius:4px;padding:2px 7px;display:inline-block;margin-bottom:7px;letter-spacing:.03em}
+.cd h3{font-size:14.5px;font-weight:700;margin-bottom:4px}
+.cd p{font-size:12px;color:var(--text-3);line-height:1.55}
+.cd .meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-4);margin-top:7px;line-height:1.55}
+
+/* Knowledge Base strip */
+.kb{display:flex;align-items:center;justify-content:center;gap:12px;margin:4px 0}
+.kb::before,.kb::after{content:'';flex:1;height:1.5px;background:var(--border)}
+.kb-box{border:1.5px dashed var(--kb-bd);border-radius:7px;padding:9px 22px;background:var(--kb-bg);text-align:center;white-space:nowrap}
+.kb-box .lb{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.kb-box .ds{font-size:11px;color:var(--text-3);margin-top:2px}
+
+/* Execute card (accent border) */
+.cd-exec{border-color:var(--accent);background:var(--accent-bg)}
+.cd-exec .nm{background:var(--text)}
+
+/* Output items */
+.out-items{margin-top:9px;display:flex;flex-direction:column;gap:5px}
+.out-item{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:500;color:var(--text-2)}
+.out-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.out-dot.a{background:var(--accent)}.out-dot.b{background:var(--text)}.out-dot.c{background:var(--text-4)}
+
+/* Result bar */
+.res{margin-top:16px;border-top:2px solid var(--text);padding-top:14px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.res .l{font-size:12.5px;color:var(--text-3);line-height:1.5}
+.res .l strong{color:var(--text);font-weight:700}
+.res .r{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--accent);font-weight:500}
+
+/* Arrow SVG classes */
+.ar{stroke:var(--arr);stroke-width:1.5;fill:none;marker-end:url(#ah)}
+.ab{stroke:var(--arr-a);stroke-width:2;fill:none;marker-end:url(#ahb)}
+
+@media(max-width:640px){.g2{grid-template-columns:1fr}.hdr h2{font-size:20px}.tags{flex-wrap:wrap}}
+</style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
-  <nav class="navbar"><div class="nav-inner">
-    <a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a>
-    <div class="nav-links">
-      <a href="index.html" class="active">Home</a>
-      <a href="product.html">How It Works</a>
-      <a href="docs.html">Docs</a>
-      <a href="about.html">About</a>
+<svg width="0" height="0" style="position:absolute">
+<defs>
+  <marker id="ah" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="var(--arr)"/></marker>
+  <marker id="ahb" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="var(--arr-a)"/></marker>
+</defs>
+</svg>
+
+<div class="pg">
+
+  <!-- Toggle -->
+  <div class="topbar">
+    <div class="tog" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">
+      <span>Light</span>
+      <div class="tog-track"><div class="tog-dot"></div></div>
+      <span>Dark</span>
     </div>
-    <div class="nav-actions">
-      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
-      <a href="#waitlist" class="btn btn-primary" style="padding:8px 18px;font-size:.82rem;">Join Waitlist</a>
-      <button class="mobile-btn" id="mobile-btn" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
-  </div></nav>
-  <div class="mobile-nav" id="mobile-nav">
-    <a href="index.html">Home</a><a href="product.html">How It Works</a><a href="docs.html">Docs</a><a href="about.html">About</a>
-    <button class="theme-toggle" id="mobile-theme-toggle" style="align-self:flex-start;margin-top:12px;"></button>
   </div>
 
-  <!-- ========== HERO ========== -->
-  <section class="hero">
-    <div class="hero-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
-    <div class="hero-grid-bg"></div>
-    <div class="container-wide">
-      <div class="hero-layout">
-        <div class="hero-content">
-          <div class="badge fade-up d1"><span class="badge-dot"></span> Private Beta</div>
-          <h1 class="fade-up d2">Your agents should<br><span class="text-gradient">understand the browser.</span></h1>
-          <p class="hero-desc fade-up d3">Discover UI. Index semantically. Execute autonomously. Export agent-ready code.</p>
-          <div class="hero-actions fade-up d4">
-            <a href="#waitlist" class="btn btn-primary btn-lg">Join the Waitlist</a>
-            <a href="product.html" class="btn btn-ghost btn-lg">See how it works &rarr;</a>
-          </div>
-        </div>
-        <div class="hero-terminal fade-up d5">
-          <div class="terminal">
-            <div class="terminal-header">
-              <div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div>
-              <span class="terminal-title">colt</span>
-            </div>
-            <div class="terminal-body" id="hero-term"></div>
-          </div>
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-row">
+      <div class="logo">COLT</div>
+    </div>
+    <h2><span>Browser Automation</span> &amp; Agent Framework</h2>
+    <p>Describe what you want in plain English. COLT discovers your app, builds an intelligent agent, executes the task, and exports production-ready code — all in one pipeline.</p>
+  </div>
+
+  <!-- Dual positioning -->
+  <div class="tags">
+    <div class="tag hi">Browser Automation</div>
+    <div class="tag hi">Agent Builder</div>
+    <div class="tag">Playwright-Native</div>
+  </div>
+
+  <div class="flow">
+
+    <!-- Input -->
+    <div class="in-box">
+      <div class="lb">Natural Language Input</div>
+      <div class="vl">"Create a new user with email admin@test.com and assign admin role"</div>
+    </div>
+
+    <div class="cn"><svg width="2" height="14"><line x1="1" y1="0" x2="1" y2="14" class="ar"/></svg></div>
+
+    <!-- Phase 1 + 2 -->
+    <div class="g2">
+      <div class="cd">
+        <div class="nm">01 DISCOVER</div>
+        <h3>Autonomous App Crawl</h3>
+        <p>BFS traversal maps every page, form, modal, and interactive element — including Shadow DOM components and cross-origin iframes.</p>
+        <div class="meta">Playwright engine · CSS selector extraction · Scroll &amp; pagination guards</div>
+      </div>
+      <div class="cd">
+        <div class="nm">02 INDEX</div>
+        <h3>Semantic Intelligence</h3>
+        <p>LLM summarizes each state. Vector embeddings enable instant semantic retrieval — the agent knows where to go for any task without re-crawling.</p>
+        <div class="meta">LLM summaries · ChromaDB vectors · State graph · API schema capture</div>
+      </div>
+    </div>
+
+    <div class="cn"><svg width="2" height="10"><line x1="1" y1="0" x2="1" y2="10" class="ar"/></svg></div>
+
+    <!-- Knowledge Base -->
+    <div class="kb">
+      <div class="kb-box">
+        <div class="lb">Persistent Knowledge Base</div>
+        <div class="ds">Behavior map + search index + API schema — discover once, run unlimited tasks</div>
+      </div>
+    </div>
+
+    <div class="cn"><svg width="2" height="10"><line x1="1" y1="0" x2="1" y2="10" class="ab"/></svg></div>
+
+    <!-- Phase 3 + 4 -->
+    <div class="g2">
+      <div class="cd cd-exec">
+        <div class="nm">03 EXECUTE</div>
+        <h3>ReAct Agent Loop</h3>
+        <p>Observe DOM state, reason about the next action, act on the browser — repeating until the task is verified complete. Self-heals on errors and detects loops.</p>
+        <div class="meta">Observe &rarr; Reason &rarr; Act · Token budget · Loop detection · Error recovery</div>
+      </div>
+      <div class="cd">
+        <div class="nm">04 RECORD</div>
+        <h3>Code Generation</h3>
+        <p>Every browser action is traced with full context — selector, value, reasoning — then exported as reusable automation code.</p>
+        <div class="out-items">
+          <div class="out-item"><div class="out-dot a"></div>Standalone Playwright script</div>
+          <div class="out-item"><div class="out-dot b"></div>Pytest-compatible test file</div>
+          <div class="out-item"><div class="out-dot c"></div>Typed Python module with function registry</div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ========== STATS ========== -->
-  <section class="stats-bar">
-    <div class="container-wide"><div class="stats-row">
-      <!-- <div class="stat-item"><span class="stat-num" data-count="3290">0</span><span class="stat-label">Lines in sensory.py</span></div> -->
-      <!-- <div class="stat-div"></div> -->
-      <div class="stat-item"><span class="stat-num" data-count="7">0</span><span class="stat-label">Hidden UI strategies</span></div>
-      <div class="stat-div"></div>
-      <div class="stat-item"><span class="stat-num" data-count="25">0</span><span class="stat-label">Max ReAct iterations</span></div>
-      <div class="stat-div"></div>
-      <div class="stat-item"><span class="stat-num" data-count="13">0</span><span class="stat-label">Success selectors</span></div>
-    </div></div>
-  </section>
+    <div class="cn"><svg width="2" height="14"><line x1="1" y1="0" x2="1" y2="14" class="ar"/></svg></div>
 
-  <!-- ========== PIPELINE ========== -->
-  <section class="section pipeline-section">
-    <div class="container">
-      <div class="section-header text-center reveal"><h2>Five phases. Zero scripting.</h2></div>
-      <div class="pipeline-vis" id="pipeline-vis">
-        <div class="pipe-track"><div class="pipe-fill" id="pipe-fill"></div></div>
-        <div class="pipe-nodes">
-          <div class="pipe-node on" data-s="0"><div class="pipe-ring"><span>01</span></div><h4>Discover</h4><p>Crawl &amp; find every element</p></div>
-          <div class="pipe-node" data-s="1"><div class="pipe-ring"><span>02</span></div><h4>Index</h4><p>Vector embeddings in ChromaDB</p></div>
-          <div class="pipe-node" data-s="2"><div class="pipe-ring"><span>03</span></div><h4>Search</h4><p>Cosine similarity match</p></div>
-          <div class="pipe-node" data-s="3"><div class="pipe-ring"><span>04</span></div><h4>Execute</h4><p>Observe, Reason, Act loop</p></div>
-          <div class="pipe-node" data-s="4"><div class="pipe-ring"><span>05</span></div><h4>Verify</h4><p>Confirm task completion</p></div>
-        </div>
-      </div>
+    <!-- Result -->
+    <div class="res">
+      <div class="l"><strong>Output:</strong> Production-ready automation code — run, modify, or integrate into any CI/CD pipeline</div>
+      <div class="r">$ colt execute "task" --react --record script.py</div>
     </div>
-  </section>
 
-  <!-- ========== CAPABILITIES TABS ========== -->
-  <section class="section" style="background:var(--bg-secondary);">
-    <div class="container">
-      <div class="section-header text-center reveal"><h2>Built for production browsers</h2><p>Not sanitized demos.</p></div>
-      <div class="tabs-wrap reveal">
-        <div class="tabs-nav" id="tabs-nav">
-          <button class="tab-btn active" data-tab="react-loop">ReAct Loop</button>
-          <button class="tab-btn" data-tab="modal">Modal Detection</button>
-          <button class="tab-btn" data-tab="shadow">Shadow DOM</button>
-          <button class="tab-btn" data-tab="fallback">Fallbacks</button>
-          <button class="tab-btn" data-tab="hidden">Hidden UI</button>
-        </div>
+  </div>
+</div>
 
-        <!-- ReAct -->
-        <div class="tab-panel active" id="tab-react-loop">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>Observe &rarr; Reason &rarr; Act</h3>
-              <p>Each iteration captures live DOM, compresses to 3,500 tokens, executes one action, validates. Detects 1-2-3 step repetition loops.</p>
-              <div class="pills"><div class="pill"><b>25</b> max iter</div><div class="pill"><b>30</b> LLM calls</div><div class="pill"><b>3,500</b> token budget</div></div>
-            </div>
-            <div class="tab-visual">
-              <div class="cycle" id="react-cycle">
-                <div class="cycle-step on" data-p="0"><div class="ci"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><span>Observe</span></div>
-                <div class="cycle-arrow">&darr;</div>
-                <div class="cycle-step" data-p="1"><div class="ci"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div><span>Reason</span></div>
-                <div class="cycle-arrow">&darr;</div>
-                <div class="cycle-step" data-p="2"><div class="ci"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><span>Act</span></div>
-                <div class="cycle-arrow">&darr;</div>
-                <div class="cycle-step" data-p="3"><div class="ci"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><span>Validate</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal -->
-        <div class="tab-panel" id="tab-modal">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>Dual-Strategy Modal Detection</h3>
-              <p>Visibility diffing catches CSS-toggle modals. MutationObserver catches React/Vue portal injections. Classifies: modal, drawer, dropdown, accordion, tab panel.</p>
-              <div class="pills"><div class="pill"><b>12s</b> time budget</div><div class="pill"><b>24</b> synonym dict</div><div class="pill"><b>2</b> strategies</div></div>
-            </div>
-            <div class="tab-visual">
-              <div class="modal-demo">
-                <div class="mdp-bar"></div>
-                <div class="mdp-lines"><div class="mdp-line"></div><div class="mdp-line s"></div></div>
-                <div class="mdp-cta"></div>
-                <div class="modal-overlay" id="modal-overlay">
-                  <div class="modal-dialog">
-                    <div class="md-title"></div><div class="md-field"></div><div class="md-field"></div>
-                    <div class="md-row"><div class="md-btn md-btn-c"></div><div class="md-btn md-btn-s"></div></div>
-                    <span class="detected">Detected: modal (aria-modal)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Shadow DOM -->
-        <div class="tab-panel" id="tab-shadow">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>Shadow DOM + Iframe Piercing</h3>
-              <p>Recursive <code>walkShadow()</code> traverses open roots. Playwright <code>&gt;&gt;</code> piercing for Shadow DOM. CDP-based <code>&gt;&gt;&gt;</code> for cross-origin iframes.</p>
-              <div class="pills"><div class="pill">Salesforce LWC</div><div class="pill">Lit / Stencil</div><div class="pill">Stripe Elements</div></div>
-            </div>
-            <div class="tab-visual">
-              <div class="dom-tree">
-                <div class="dn dn-root">&lt;app-shell&gt;<div class="dn-children"><div class="dn dn-sh">shadow-root<div class="dn-children"><div class="dn dn-el">&lt;nav-bar&gt;<div class="dn-children"><div class="dn dn-sh">shadow-root<div class="dn-children"><div class="dn dn-target">&lt;button&gt;</div></div></div></div></div></div></div></div></div>
-                <div class="dom-out">app-shell >> nav-bar >> button.submit</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Fallbacks -->
-        <div class="tab-panel" id="tab-fallback">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>Multi-Strategy Fallback Chains</h3>
-              <p>Every interaction has a fallback chain. If the primary fails, progressively more aggressive approaches fire automatically.</p>
-            </div>
-            <div class="tab-visual">
-              <div class="fb-chains">
-                <div class="fb-row"><div class="fb-name">click()</div><div class="fb-steps"><span class="fb-s fb-g">page.click()</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-y">scroll + click</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-r">JS dispatch</span></div></div>
-                <div class="fb-row"><div class="fb-name">fill()</div><div class="fb-steps"><span class="fb-s fb-g">page.fill()</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-y">Ctrl+A + type</span></div></div>
-                <div class="fb-row"><div class="fb-name">select()</div><div class="fb-steps"><span class="fb-s fb-g">by value</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-y">by label</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-r">JS iteration</span></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Hidden UI -->
-        <div class="tab-panel" id="tab-hidden">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>7 Hidden UI Strategies</h3>
-              <p>Most automation misses UI that appears conditionally. COLT discovers all of it.</p>
-            </div>
-            <div class="tab-visual">
-              <div class="hui-list">
-                <div class="hui"><span class="hui-n">01</span><b>Timed UI</b><small>Cookie banners, toasts</small></div>
-                <div class="hui"><span class="hui-n">02</span><b>Contextual</b><small>Bulk action bars</small></div>
-                <div class="hui"><span class="hui-n">03</span><b>Keyboard</b><small>Ctrl+K, Ctrl+/</small></div>
-                <div class="hui"><span class="hui-n">04</span><b>Context menus</b><small>Right-click, scoring</small></div>
-                <div class="hui"><span class="hui-n">05</span><b>Scroll content</b><small>Infinite, lazy load</small></div>
-                <div class="hui"><span class="hui-n">06</span><b>Conditional</b><small>Keyword heuristic</small></div>
-                <div class="hui"><span class="hui-n">07</span><b>Lazy tabs</b><small>200ms poll, deferred</small></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== COLT APP ========== -->
-  <section class="section app-section">
-    <div class="container">
-      <div class="section-header text-center reveal">
-        <div class="badge"><span class="badge-dot"></span> COLT App</div>
-        <h2>Describe it. Generate it. <span class="text-gradient">Ship it.</span></h2>
-        <p>Context-aware code generation. Export-ready agents. No runtime dependency.</p>
-      </div>
-      <div class="app-demo reveal">
-        <div class="app-in">
-          <div class="app-in-label">Describe your agent</div>
-          <div class="app-in-text" id="app-in"></div>
-          <div class="app-cursor"></div>
-        </div>
-        <div class="app-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-        <div>
-          <div class="terminal">
-            <div class="terminal-header"><div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div><span class="terminal-title">billing_monitor.py</span></div>
-            <div class="terminal-body" id="app-out"></div>
-          </div>
-        </div>
-      </div>
-      <div class="app-feats reveal">
-        <div class="app-feat">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          <h4>Context-Aware</h4><p>Real selectors from your discovered semantic index.</p>
-        </div>
-        <div class="app-feat">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg>
-          <h4>Export-Ready</h4><p>Standalone Python. Drop into CI/CD or cron.</p>
-        </div>
-        <div class="app-feat">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <h4>Resilient</h4><p>Inherits fallback chains and selector cascades.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== COMPARISON ========== -->
-  <section class="section" style="background:var(--bg-secondary);">
-    <div class="container">
-      <div class="section-header text-center reveal">
-        <h2>Traditional automation is scripting.<br>COLT is <span class="text-gradient">understanding.</span></h2>
-      </div>
-      <div class="cmp-grid reveal">
-        <div class="cmp-card cmp-old">
-          <div class="cmp-label">Traditional</div>
-          <div class="cmp-items">
-            <div class="ci"><span class="ci-x"></span>Write explicit selectors</div>
-            <div class="ci"><span class="ci-x"></span>Script every interaction</div>
-            <div class="ci"><span class="ci-x"></span>Breaks when UI changes</div>
-            <div class="ci"><span class="ci-x"></span>No modal handling</div>
-            <div class="ci"><span class="ci-x"></span>Constant maintenance</div>
-          </div>
-        </div>
-        <div class="cmp-vs">vs</div>
-        <div class="cmp-card cmp-new">
-          <div class="cmp-label">COLT</div>
-          <div class="cmp-items">
-            <div class="ci"><span class="ci-ok"></span>Discovers selectors automatically</div>
-            <div class="ci"><span class="ci-ok"></span>Natural language input</div>
-            <div class="ci"><span class="ci-ok"></span>Adapts to live DOM</div>
-            <div class="ci"><span class="ci-ok"></span>Auto-detects modals &amp; drawers</div>
-            <div class="ci"><span class="ci-ok"></span>Self-healing fallback chains</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== WAITLIST ========== -->
-  <section class="section waitlist-section" id="waitlist">
-    <div class="container">
-      <div class="waitlist-box reveal" id="home-wl-box">
-        <div class="badge"><span class="badge-dot"></span> Private Beta</div>
-        <h2 id="home-wl-title">Get early access</h2>
-        <p id="home-wl-desc">Join the waitlist. We will reach out when your spot opens.</p>
-        <form class="wl-form" id="wl-form">
-          <input type="email" id="home-wl-email" placeholder="you@company.com" required>
-          <button type="submit" class="btn btn-primary btn-lg" id="home-wl-btn">Join Waitlist</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="footer"><div class="container"><div class="footer-grid">
-    <div class="footer-brand"><a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a><p>Autonomous browser execution engine for building intelligent web agents.</p></div>
-    <div class="footer-col"><h4>Product</h4><a href="product.html">How It Works</a><a href="docs.html">Documentation</a></div>
-    <div class="footer-col"><h4>Project</h4><a href="about.html">About</a><a href="#waitlist">Join Waitlist</a></div>
-    <div class="footer-col"><h4>Resources</h4><a href="docs.html#quickstart">Quickstart</a><a href="docs.html#architecture">Architecture</a></div>
-  </div><div class="footer-bottom"><span>COLT &mdash; Autonomous Browser Execution Engine</span><a href="#waitlist">Join Waitlist</a></div></div></footer>
-
-  <script src="js/supabase.js"></script>
-  <script src="js/main.js"></script>
 </body>
 </html>
