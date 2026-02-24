@@ -1,311 +1,439 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COLT — Autonomous Browser Execution Engine</title>
-  <meta name="description" content="Build browser agents that understand your website. Discover, index, execute, export.">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/pages.css">
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COLT — Browser Automation Framework</title>
+<meta name="description" content="Describe tasks in plain English. Get production-ready Playwright scripts. COLT discovers your web app, executes tasks autonomously, and exports reusable code.">
+<link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090b;--bg-2:#111113;--bg-3:#18181b;
+  --border:#27272a;--border-2:#3f3f46;
+  --text:#fafafa;--text-2:#d4d4d8;--text-3:#a1a1aa;--text-4:#71717a;
+  --accent:#818cf8;--accent-2:#6366f1;--accent-dim:rgba(129,140,248,.1);
+  --green:#34d399;
+  --radius:12px;--radius-sm:8px;
+  --font:'General Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --max:1100px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg);color:var(--text);font-family:var(--font)}
+body{-webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+::selection{background:var(--accent-2);color:#fff}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.02'/%3E%3C/svg%3E")}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+section{padding:96px 0}
+section+section{border-top:1px solid var(--border)}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(9,9,11,.8);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:54px}
+.nav-logo{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.1em;color:var(--text)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{font-size:13px;font-weight:500;color:var(--text-3);transition:color .2s}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.nav-cta{font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;background:var(--accent-2);color:#fff;transition:background .2s}
+.nav-cta:hover{background:var(--accent);text-decoration:none}
+.hamburger{display:none;background:none;border:none;color:var(--text);font-size:20px;cursor:pointer}
+
+/* Hero */
+.hero{padding:130px 0 88px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-block;padding:4px 14px;border-radius:100px;border:1px solid var(--border-2);font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:22px;background:var(--bg-2);letter-spacing:.02em;animation:fadeUp .6s ease both}
+.hero h1{font-size:clamp(34px,5vw,58px);font-weight:700;line-height:1.08;letter-spacing:-.03em;margin-bottom:18px;animation:fadeUp .6s ease .1s both}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:17px;color:var(--text-3);max-width:520px;margin:0 auto 28px;line-height:1.6;animation:fadeUp .6s ease .2s both}
+.hero-actions{display:flex;gap:10px;justify-content:center;animation:fadeUp .6s ease .3s both}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
+.btn-primary{background:var(--accent-2);color:#fff}.btn-primary:hover{background:var(--accent);text-decoration:none}
+.btn-ghost{background:transparent;color:var(--text-2);border:1px solid var(--border-2)}.btn-ghost:hover{border-color:var(--text-4);color:var(--text);text-decoration:none}
+
+/* Terminal */
+.terminal{max-width:640px;margin:40px auto 0;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-2);overflow:hidden;text-align:left;animation:fadeUp .6s ease .4s both}
+.term-bar{display:flex;align-items:center;gap:6px;padding:9px 14px;background:var(--bg-3);border-bottom:1px solid var(--border)}
+.term-dot{width:9px;height:9px;border-radius:50%}.term-dot.r{background:#f87171}.term-dot.y{background:#fbbf24}.term-dot.g{background:#34d399}
+.term-title{margin-left:8px;font-family:var(--mono);font-size:11px;color:var(--text-4)}
+.term-body{padding:14px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.8;color:var(--text-3)}
+.term-body .p{color:var(--text-4)}.term-body .c{color:var(--text)}.term-body .f{color:var(--accent)}.term-body .s{color:var(--green)}.term-body .o{color:var(--text-4);font-style:italic}
+
+/* Section headings */
+.sl{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.st{font-size:clamp(26px,3vw,36px);font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-bottom:14px}
+.sd{font-size:15px;color:var(--text-3);max-width:520px;line-height:1.6;margin-bottom:44px}
+
+/* Steps */
+.steps{display:flex;flex-direction:column;gap:0;position:relative}
+.steps::before{content:'';position:absolute;left:21px;top:22px;bottom:22px;width:1px;background:var(--border)}
+.step{display:flex;gap:22px;padding:24px 0;position:relative}
+.step-n{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:700;border:1.5px solid var(--border-2);background:var(--bg);color:var(--text-4);flex-shrink:0;z-index:2;transition:all .3s}
+.step:hover .step-n{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.step-c h3{font-size:17px;font-weight:700;margin-bottom:4px}
+.step-c p{font-size:13.5px;color:var(--text-3);line-height:1.6}
+.tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-family:var(--mono);font-size:10px;font-weight:500;padding:3px 9px;border-radius:100px;border:1px solid var(--border);color:var(--text-4);background:var(--bg-2)}
+
+/* Value cards */
+.vg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.vc{border:1px solid var(--border);border-radius:var(--radius);padding:24px 22px;background:var(--bg-2);transition:border-color .2s,transform .2s}
+.vc:hover{border-color:var(--border-2);transform:translateY(-2px)}
+.vc h3{font-size:15px;font-weight:700;margin-bottom:5px}
+.vc p{font-size:12.5px;color:var(--text-3);line-height:1.55}
+
+/* Handles list */
+.handles{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;margin-top:32px}
+.handle{font-size:13px;color:var(--text-3);padding:6px 0;display:flex;align-items:center;gap:8px}
+.handle::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+
+/* Comparison table */
+.ct{width:100%;border-collapse:collapse;margin-top:32px;font-size:12.5px}
+.ct th{text-align:left;padding:10px 14px;font-weight:600;font-size:11px;color:var(--text-4);letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg-2)}
+.ct td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-3)}
+.ct tr:last-child td{border-bottom:none}
+.ct .y{color:var(--green);font-weight:600}.ct .n{color:var(--text-4)}
+.ct .hl{background:var(--accent-dim)}.ct .hl td{color:var(--text)}
+
+/* Architecture */
+.arch{display:flex;align-items:stretch;gap:2px;margin-top:28px}
+.arch-n{flex:1;border:1px solid var(--border);border-radius:var(--radius);padding:18px 14px;background:var(--bg-2);text-align:center}
+.arch-n .num{font-family:var(--mono);font-size:10px;color:var(--accent);display:block;margin-bottom:6px}
+.arch-n h4{font-size:12.5px;font-weight:700;margin-bottom:3px}
+.arch-n p{font-size:10.5px;color:var(--text-4);line-height:1.4}
+.arch-a{display:flex;align-items:center;color:var(--text-4);font-size:16px;padding:0 2px}
+
+/* Stats bar */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px}
+.stat{border:1px solid var(--border);border-radius:var(--radius);padding:20px 18px;background:var(--bg-2);text-align:center}
+.stat .n{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--text);margin-bottom:2px}
+.stat .l{font-size:11px;color:var(--text-4)}
+
+/* Docs */
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dc{border:1px solid var(--border);border-radius:var(--radius);padding:22px;background:var(--bg-2);transition:border-color .2s}
+.dc:hover{border-color:var(--border-2)}
+.dc h3{font-size:14px;font-weight:700;margin-bottom:5px}
+.dc p{font-size:12.5px;color:var(--text-3);line-height:1.5;margin-bottom:10px}
+.code{font-family:var(--mono);font-size:11.5px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border);color:var(--text-3);overflow-x:auto;line-height:1.7;white-space:pre}
+.code .cm{color:var(--text-4);font-style:italic}.code .k{color:var(--accent)}.code .s{color:var(--green)}
+
+/* CLI ref */
+.cli-row{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);align-items:baseline}
+.cli-cmd{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text);min-width:320px;flex-shrink:0}
+.cli-desc{font-size:12.5px;color:var(--text-3)}
+
+/* Output tree */
+.tree{max-width:480px}
+
+/* LLM table */
+.llm-t{max-width:520px}
+.llm-t td,.llm-t th{font-size:12px}
+.llm-t .mono{font-family:var(--mono);font-size:11px}
+
+/* CTA */
+.cta{text-align:center;padding:96px 0;position:relative}
+.cta::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:480px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.07) 0%,transparent 70%);pointer-events:none}
+.cta h2{font-size:clamp(26px,3.5vw,40px);font-weight:700;letter-spacing:-.02em;margin-bottom:14px}
+.cta p{font-size:15px;color:var(--text-3);margin-bottom:28px}
+.wl{display:flex;gap:8px;justify-content:center;max-width:400px;margin:0 auto}
+.wl input{flex:1;padding:9px 14px;border-radius:var(--radius-sm);border:1px solid var(--border-2);background:var(--bg-3);color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:border-color .2s}
+.wl input:focus{border-color:var(--accent)}.wl input::placeholder{color:var(--text-4)}
+
+/* Footer */
+footer{border-top:1px solid var(--border);padding:28px 0}
+.footer-inner{display:flex;justify-content:space-between;align-items:center}
+.footer-l{font-size:11px;color:var(--text-4)}
+.footer-r{display:flex;gap:18px}.footer-r a{font-size:11px;color:var(--text-4)}.footer-r a:hover{color:var(--text-3)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+  .nav-links{display:none}.hamburger{display:block}
+  .vg,.dg,.stats{grid-template-columns:1fr}.handles{grid-template-columns:1fr}
+  .arch{flex-direction:column}.arch-a{transform:rotate(90deg);justify-content:center}
+  .wl{flex-direction:column}.cli-row{flex-direction:column;gap:3px}.cli-cmd{min-width:auto}
+  .footer-inner{flex-direction:column;gap:10px;text-align:center}
+  section{padding:64px 0}
+}
+</style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
-  <nav class="navbar"><div class="nav-inner">
-    <a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a>
+<!-- Nav -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">COLT</a>
     <div class="nav-links">
-      <a href="index.html" class="active">Home</a>
-      <a href="product.html">How It Works</a>
-      <a href="docs.html">Docs</a>
-      <a href="about.html">About</a>
+      <a href="#how">How It Works</a>
+      <a href="#why">Why COLT</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#docs">Docs</a>
+      <a href="#waitlist" class="nav-cta">Get Early Access</a>
     </div>
-    <div class="nav-actions">
-      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
-      <a href="#waitlist" class="btn btn-primary" style="padding:8px 18px;font-size:.82rem;">Join Waitlist</a>
-      <button class="mobile-btn" id="mobile-btn" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
-  </div></nav>
-  <div class="mobile-nav" id="mobile-nav">
-    <a href="index.html">Home</a><a href="product.html">How It Works</a><a href="docs.html">Docs</a><a href="about.html">About</a>
-    <button class="theme-toggle" id="mobile-theme-toggle" style="align-self:flex-start;margin-top:12px;"></button>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'" aria-label="Menu">&#9776;</button>
   </div>
+</nav>
 
-  <!-- ========== HERO ========== -->
-  <section class="hero">
-    <div class="hero-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
-    <div class="hero-grid-bg"></div>
-    <div class="container-wide">
-      <div class="hero-layout">
-        <div class="hero-content">
-          <div class="badge fade-up d1"><span class="badge-dot"></span> Private Beta</div>
-          <h1 class="fade-up d2">Your agents should<br><span class="text-gradient">understand the browser.</span></h1>
-          <p class="hero-desc fade-up d3">Discover UI. Index semantically. Execute autonomously. Export agent-ready code.</p>
-          <div class="hero-actions fade-up d4">
-            <a href="#waitlist" class="btn btn-primary btn-lg">Join the Waitlist</a>
-            <a href="product.html" class="btn btn-ghost btn-lg">See how it works &rarr;</a>
-          </div>
+<!-- Hero -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-badge">Closed Beta</div>
+    <h1>Describe a task.<br><em>Get a Playwright script.</em></h1>
+    <p>COLT discovers your web app, executes browser tasks from plain English, and exports production-ready automation code.</p>
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn btn-primary">Get Early Access</a>
+      <a href="#how" class="btn btn-ghost">See How It Works</a>
+    </div>
+    <div class="terminal">
+      <div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span class="term-title">terminal</span></div>
+      <div class="term-body"><span class="p">$</span> <span class="c">colt discover</span> <span class="f">-c</span> <span class="s">myapp.yaml</span>
+<span class="o">  47 states, 312 elements, 89 forms mapped</span>
+
+<span class="p">$</span> <span class="c">colt execute</span> <span class="s">"Create user with email admin@co.com"</span> <span class="f">--react --record</span> <span class="s">replay.py</span>
+<span class="o">  Task complete — 8 steps, 12.3s — saved to replay.py</span>
+
+<span class="p">$</span> <span class="c">python replay.py</span>
+<span class="o">  Standalone Playwright script — runs without COLT</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="how">
+  <div class="wrap">
+    <div class="sl reveal">How It Works</div>
+    <div class="st reveal">Four steps. One command each.</div>
+    <div class="sd reveal">COLT learns your app by exploring it — then executes anything you describe.</div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-n">01</div>
+        <div class="step-c">
+          <h3>Discover your app</h3>
+          <p>Autonomously crawls your web application. Clicks buttons, opens modals, switches tabs, scrolls lists. Maps every page, form, and interactive element with exact CSS selectors. Handles Shadow DOM and cross-origin iframes.</p>
+          <div class="tags"><span class="tag">BFS crawl</span><span class="tag">Shadow DOM piercing</span><span class="tag">Iframe traversal</span><span class="tag">Scroll detection</span><span class="tag">Pagination guard</span></div>
         </div>
-        <div class="hero-terminal fade-up d5">
-          <div class="terminal">
-            <div class="terminal-header">
-              <div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div>
-              <span class="terminal-title">colt</span>
-            </div>
-            <div class="terminal-body" id="hero-term"></div>
-          </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-n">02</div>
+        <div class="step-c">
+          <h3>Build a knowledge base</h3>
+          <p>Each state is summarized by an LLM and stored as a vector embedding. Creates a persistent, searchable index of your entire app. Discover once — then run unlimited tasks without re-crawling.</p>
+          <div class="tags"><span class="tag">LLM summaries</span><span class="tag">Vector embeddings</span><span class="tag">ChromaDB</span><span class="tag">State graph</span><span class="tag">API schema capture</span></div>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-n">03</div>
+        <div class="step-c">
+          <h3>Execute any task</h3>
+          <p>Describe what you want in plain English. A ReAct agent observes live DOM state, reasons about the next action, and executes it. Self-heals on failures with fallback chains. Detects and breaks out of infinite loops.</p>
+          <div class="tags"><span class="tag">Observe / Reason / Act</span><span class="tag">Self-healing</span><span class="tag">Loop detection</span><span class="tag">Token budget</span></div>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-n">04</div>
+        <div class="step-c">
+          <h3>Export reusable code</h3>
+          <p>Every action is traced with full context and exported as standard Playwright Python. Run the output without COLT, modify it by hand, or commit it to your repo. No vendor lock-in.</p>
+          <div class="tags"><span class="tag">Playwright script</span><span class="tag">Pytest test</span><span class="tag">Typed Python functions</span><span class="tag">JSON trace</span></div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ========== STATS ========== -->
-  <section class="stats-bar">
-    <div class="container-wide"><div class="stats-row">
-      <!-- <div class="stat-item"><span class="stat-num" data-count="3290">0</span><span class="stat-label">Lines in sensory.py</span></div> -->
-      <!-- <div class="stat-div"></div> -->
-      <div class="stat-item"><span class="stat-num" data-count="7">0</span><span class="stat-label">Hidden UI strategies</span></div>
-      <div class="stat-div"></div>
-      <div class="stat-item"><span class="stat-num" data-count="25">0</span><span class="stat-label">Max ReAct iterations</span></div>
-      <div class="stat-div"></div>
-      <div class="stat-item"><span class="stat-num" data-count="13">0</span><span class="stat-label">Success selectors</span></div>
-    </div></div>
-  </section>
+<!-- Why COLT -->
+<section id="why">
+  <div class="wrap">
+    <div class="sl reveal">Why COLT</div>
+    <div class="st reveal">Built different from other browser agents</div>
+    <div class="sd reveal">Most AI agents start from scratch every run and produce nothing reusable. COLT remembers your app and outputs real code.</div>
 
-  <!-- ========== PIPELINE ========== -->
-  <section class="section pipeline-section">
-    <div class="container">
-      <div class="section-header text-center reveal"><h2>Five phases. Zero scripting.</h2></div>
-      <div class="pipeline-vis" id="pipeline-vis">
-        <div class="pipe-track"><div class="pipe-fill" id="pipe-fill"></div></div>
-        <div class="pipe-nodes">
-          <div class="pipe-node on" data-s="0"><div class="pipe-ring"><span>01</span></div><h4>Discover</h4><p>Crawl &amp; find every element</p></div>
-          <div class="pipe-node" data-s="1"><div class="pipe-ring"><span>02</span></div><h4>Index</h4><p>Vector embeddings in ChromaDB</p></div>
-          <div class="pipe-node" data-s="2"><div class="pipe-ring"><span>03</span></div><h4>Search</h4><p>Cosine similarity match</p></div>
-          <div class="pipe-node" data-s="3"><div class="pipe-ring"><span>04</span></div><h4>Execute</h4><p>Observe, Reason, Act loop</p></div>
-          <div class="pipe-node" data-s="4"><div class="pipe-ring"><span>05</span></div><h4>Verify</h4><p>Confirm task completion</p></div>
-        </div>
+    <div class="vg reveal">
+      <div class="vc">
+        <h3>Persistent knowledge</h3>
+        <p>One crawl builds a knowledge base. Task #100 executes as fast as task #1 — no re-exploration, no wasted LLM calls.</p>
+      </div>
+      <div class="vc">
+        <h3>Code output, not just execution</h3>
+        <p>Every run produces a standalone Playwright script. Run it without COLT, modify it, commit it. The automation outlives the agent.</p>
+      </div>
+      <div class="vc">
+        <h3>Handles complex UIs</h3>
+        <p>Shadow DOM components, cross-origin iframes, infinite scroll, modals, tabs, pagination — the edge cases that break other tools.</p>
       </div>
     </div>
-  </section>
 
-  <!-- ========== CAPABILITIES TABS ========== -->
-  <section class="section" style="background:var(--bg-secondary);">
-    <div class="container">
-      <div class="section-header text-center reveal"><h2>Built for production browsers</h2><p>Not sanitized demos.</p></div>
-      <div class="tabs-wrap reveal">
-        <div class="tabs-nav" id="tabs-nav">
-          <button class="tab-btn active" data-tab="react-loop">ReAct Loop</button>
-          <button class="tab-btn" data-tab="modal">Modal Detection</button>
-          <button class="tab-btn" data-tab="shadow">Shadow DOM</button>
-          <button class="tab-btn" data-tab="fallback">Fallbacks</button>
-          <button class="tab-btn" data-tab="hidden">Hidden UI</button>
-        </div>
+    <div class="handles reveal">
+      <div class="handle">Shadow DOM — Salesforce Lightning, Shoelace, Material Web</div>
+      <div class="handle">Cross-origin iframes — Stripe Elements, PayPal, embeds</div>
+      <div class="handle">Infinite scroll and virtual lists</div>
+      <div class="handle">Modals, drawers, and dialogs</div>
+      <div class="handle">Tabbed interfaces and accordions</div>
+      <div class="handle">URL and query-based pagination</div>
+      <div class="handle">Timed UI — toasts, banners, consent popups</div>
+      <div class="handle">Context menus and keyboard shortcuts</div>
+    </div>
 
-        <!-- ReAct -->
-        <div class="tab-panel active" id="tab-react-loop">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>Observe &rarr; Reason &rarr; Act</h3>
-              <p>Each iteration captures live DOM, compresses to 3,500 tokens, executes one action, validates. Detects 1-2-3 step repetition loops.</p>
-              <div class="pills"><div class="pill"><b>25</b> max iter</div><div class="pill"><b>30</b> LLM calls</div><div class="pill"><b>3,500</b> token budget</div></div>
-            </div>
-            <div class="tab-visual">
-              <div class="cycle" id="react-cycle">
-                <div class="cycle-step on" data-p="0"><div class="ci"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><span>Observe</span></div>
-                <div class="cycle-arrow">&darr;</div>
-                <div class="cycle-step" data-p="1"><div class="ci"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div><span>Reason</span></div>
-                <div class="cycle-arrow">&darr;</div>
-                <div class="cycle-step" data-p="2"><div class="ci"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><span>Act</span></div>
-                <div class="cycle-arrow">&darr;</div>
-                <div class="cycle-step" data-p="3"><div class="ci"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><span>Validate</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- Comparison -->
+    <table class="ct reveal" style="margin-top:44px">
+      <thead><tr><th>Capability</th><th>Manual Playwright</th><th>Other AI Agents</th><th class="hl">COLT</th></tr></thead>
+      <tbody>
+        <tr><td>Write selectors by hand</td><td>Required</td><td class="n">Not needed</td><td class="hl y">Not needed</td></tr>
+        <tr><td>Persistent app knowledge</td><td class="n">None</td><td class="n">None — re-explores each run</td><td class="hl y">Yes — discover once</td></tr>
+        <tr><td>Reusable code output</td><td class="y">Yes (you wrote it)</td><td class="n">No — executes only</td><td class="hl y">Scripts + tests + functions</td></tr>
+        <tr><td>Shadow DOM / iframes</td><td>Manual config</td><td class="n">Limited</td><td class="hl y">Full piercing support</td></tr>
+        <tr><td>Self-healing on failure</td><td class="n">Breaks on first error</td><td>Varies</td><td class="hl y">Fallback chains + loop detection</td></tr>
+        <tr><td>Works without LLM after export</td><td class="y">Yes</td><td class="n">No</td><td class="hl y">Exported scripts are LLM-free</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-        <!-- Modal -->
-        <div class="tab-panel" id="tab-modal">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>Dual-Strategy Modal Detection</h3>
-              <p>Visibility diffing catches CSS-toggle modals. MutationObserver catches React/Vue portal injections. Classifies: modal, drawer, dropdown, accordion, tab panel.</p>
-              <div class="pills"><div class="pill"><b>12s</b> time budget</div><div class="pill"><b>24</b> synonym dict</div><div class="pill"><b>2</b> strategies</div></div>
-            </div>
-            <div class="tab-visual">
-              <div class="modal-demo">
-                <div class="mdp-bar"></div>
-                <div class="mdp-lines"><div class="mdp-line"></div><div class="mdp-line s"></div></div>
-                <div class="mdp-cta"></div>
-                <div class="modal-overlay" id="modal-overlay">
-                  <div class="modal-dialog">
-                    <div class="md-title"></div><div class="md-field"></div><div class="md-field"></div>
-                    <div class="md-row"><div class="md-btn md-btn-c"></div><div class="md-btn md-btn-s"></div></div>
-                    <span class="detected">Detected: modal (aria-modal)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- Architecture -->
+<section id="architecture">
+  <div class="wrap">
+    <div class="sl reveal">Architecture</div>
+    <div class="st reveal">Under the hood</div>
+    <div class="sd reveal">Four-phase pipeline. Python, Playwright, ChromaDB, any OpenAI-compatible LLM.</div>
 
-        <!-- Shadow DOM -->
-        <div class="tab-panel" id="tab-shadow">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>Shadow DOM + Iframe Piercing</h3>
-              <p>Recursive <code>walkShadow()</code> traverses open roots. Playwright <code>&gt;&gt;</code> piercing for Shadow DOM. CDP-based <code>&gt;&gt;&gt;</code> for cross-origin iframes.</p>
-              <div class="pills"><div class="pill">Salesforce LWC</div><div class="pill">Lit / Stencil</div><div class="pill">Stripe Elements</div></div>
-            </div>
-            <div class="tab-visual">
-              <div class="dom-tree">
-                <div class="dn dn-root">&lt;app-shell&gt;<div class="dn-children"><div class="dn dn-sh">shadow-root<div class="dn-children"><div class="dn dn-el">&lt;nav-bar&gt;<div class="dn-children"><div class="dn dn-sh">shadow-root<div class="dn-children"><div class="dn dn-target">&lt;button&gt;</div></div></div></div></div></div></div></div></div>
-                <div class="dom-out">app-shell >> nav-bar >> button.submit</div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="arch reveal">
+      <div class="arch-n"><span class="num">01</span><h4>Discovery Engine</h4><p>BFS crawler, sensory engine, Shadow DOM + iframe traversal, modal probing</p></div>
+      <div class="arch-a">&rarr;</div>
+      <div class="arch-n"><span class="num">02</span><h4>Intelligence Layer</h4><p>LLM summarization, vector embeddings, state graph, API schema inference</p></div>
+      <div class="arch-a">&rarr;</div>
+      <div class="arch-n"><span class="num">03</span><h4>ReAct Executor</h4><p>Observe, Reason, Act loop with self-healing, loop detection, token budgets</p></div>
+      <div class="arch-a">&rarr;</div>
+      <div class="arch-n"><span class="num">04</span><h4>Code Generator</h4><p>Trace recorder exporting Playwright scripts, pytest tests, typed functions</p></div>
+    </div>
 
-        <!-- Fallbacks -->
-        <div class="tab-panel" id="tab-fallback">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>Multi-Strategy Fallback Chains</h3>
-              <p>Every interaction has a fallback chain. If the primary fails, progressively more aggressive approaches fire automatically.</p>
-            </div>
-            <div class="tab-visual">
-              <div class="fb-chains">
-                <div class="fb-row"><div class="fb-name">click()</div><div class="fb-steps"><span class="fb-s fb-g">page.click()</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-y">scroll + click</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-r">JS dispatch</span></div></div>
-                <div class="fb-row"><div class="fb-name">fill()</div><div class="fb-steps"><span class="fb-s fb-g">page.fill()</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-y">Ctrl+A + type</span></div></div>
-                <div class="fb-row"><div class="fb-name">select()</div><div class="fb-steps"><span class="fb-s fb-g">by value</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-y">by label</span><span class="fb-arrow">&rarr;</span><span class="fb-s fb-r">JS iteration</span></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="stats reveal">
+      <div class="stat"><div class="n">11</div><div class="l">Modules</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">Export formats</div></div>
+      <div class="stat"><div class="n">7</div><div class="l">UI strategies detected</div></div>
+    </div>
+  </div>
+</section>
 
-        <!-- Hidden UI -->
-        <div class="tab-panel" id="tab-hidden">
-          <div class="tab-grid">
-            <div class="tab-text">
-              <h3>7 Hidden UI Strategies</h3>
-              <p>Most automation misses UI that appears conditionally. COLT discovers all of it.</p>
-            </div>
-            <div class="tab-visual">
-              <div class="hui-list">
-                <div class="hui"><span class="hui-n">01</span><b>Timed UI</b><small>Cookie banners, toasts</small></div>
-                <div class="hui"><span class="hui-n">02</span><b>Contextual</b><small>Bulk action bars</small></div>
-                <div class="hui"><span class="hui-n">03</span><b>Keyboard</b><small>Ctrl+K, Ctrl+/</small></div>
-                <div class="hui"><span class="hui-n">04</span><b>Context menus</b><small>Right-click, scoring</small></div>
-                <div class="hui"><span class="hui-n">05</span><b>Scroll content</b><small>Infinite, lazy load</small></div>
-                <div class="hui"><span class="hui-n">06</span><b>Conditional</b><small>Keyword heuristic</small></div>
-                <div class="hui"><span class="hui-n">07</span><b>Lazy tabs</b><small>200ms poll, deferred</small></div>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- Docs -->
+<section id="docs">
+  <div class="wrap">
+    <div class="sl reveal">Documentation</div>
+    <div class="st reveal">Get started in 60 seconds</div>
+    <div class="sd reveal">Install, initialize, discover, execute.</div>
+
+    <div class="dg reveal">
+      <div class="dc">
+        <h3>Installation</h3>
+        <p>Python 3.10+ required. Node.js for Playwright browsers.</p>
+        <div class="code"><span class="cm"># Install</span>
+pip install colt-automation
+playwright install chromium
+
+<span class="cm"># Set your LLM key</span>
+export GROQ_API_KEY=your-key-here</div>
+      </div>
+      <div class="dc">
+        <h3>Initialize a Project</h3>
+        <p>Generates config, output directory, installs browsers.</p>
+        <div class="code"><span class="cm"># Interactive setup</span>
+colt init my-app <span class="k">--url</span> <span class="s">http://localhost:3000</span>
+
+<span class="cm"># With specific LLM</span>
+colt init my-app <span class="k">--url</span> <span class="s">http://localhost:3000</span> <span class="k">--llm</span> openai</div>
+      </div>
+      <div class="dc">
+        <h3>Discover Your App</h3>
+        <p>Crawls the application and builds the knowledge base.</p>
+        <div class="code"><span class="cm"># Headless</span>
+colt discover
+
+<span class="cm"># Watch in browser</span>
+colt discover <span class="k">--no-headless</span>
+
+<span class="cm"># Custom config + depth</span>
+colt discover <span class="k">-c</span> <span class="s">myapp.yaml</span> <span class="k">-d</span> 3</div>
+      </div>
+      <div class="dc">
+        <h3>Execute and Record</h3>
+        <p>Run tasks and export Playwright scripts.</p>
+        <div class="code"><span class="cm"># Execute with ReAct agent</span>
+colt execute <span class="s">"Create admin user"</span> <span class="k">--react</span>
+
+<span class="cm"># Record to script</span>
+colt execute <span class="s">"Create admin user"</span> \
+  <span class="k">--react --record</span> <span class="s">replay.py</span>
+
+<span class="cm"># Generate typed functions</span>
+colt generate <span class="s">automation.py</span></div>
       </div>
     </div>
-  </section>
 
-  <!-- ========== COLT APP ========== -->
-  <section class="section app-section">
-    <div class="container">
-      <div class="section-header text-center reveal">
-        <div class="badge"><span class="badge-dot"></span> COLT App</div>
-        <h2>Describe it. Generate it. <span class="text-gradient">Ship it.</span></h2>
-        <p>Context-aware code generation. Export-ready agents. No runtime dependency.</p>
-      </div>
-      <div class="app-demo reveal">
-        <div class="app-in">
-          <div class="app-in-label">Describe your agent</div>
-          <div class="app-in-text" id="app-in"></div>
-          <div class="app-cursor"></div>
-        </div>
-        <div class="app-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-        <div>
-          <div class="terminal">
-            <div class="terminal-header"><div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div><span class="terminal-title">billing_monitor.py</span></div>
-            <div class="terminal-body" id="app-out"></div>
-          </div>
-        </div>
-      </div>
-      <div class="app-feats reveal">
-        <div class="app-feat">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          <h4>Context-Aware</h4><p>Real selectors from your discovered semantic index.</p>
-        </div>
-        <div class="app-feat">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg>
-          <h4>Export-Ready</h4><p>Standalone Python. Drop into CI/CD or cron.</p>
-        </div>
-        <div class="app-feat">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <h4>Resilient</h4><p>Inherits fallback chains and selector cascades.</p>
-        </div>
+    <!-- CLI Reference -->
+    <div class="reveal" style="margin-top:36px">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:14px">CLI Reference</h3>
+      <div class="cli-row"><span class="cli-cmd">colt init &lt;name&gt; --url &lt;url&gt; --llm &lt;provider&gt;</span><span class="cli-desc">Initialize project with config + browser setup</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt discover [-c config.yaml] [--no-headless]</span><span class="cli-desc">Crawl app and build knowledge base</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt execute "task" --react [--record file.py]</span><span class="cli-desc">Execute task with ReAct agent, optionally record</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt generate output.py [--dry-run]</span><span class="cli-desc">Generate typed functions from discovered forms</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt record trace.json output.py --format &lt;fmt&gt;</span><span class="cli-desc">Convert execution log to script / pytest / json / all</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt search "query" [-n 5]</span><span class="cli-desc">Search knowledge base for matching pages</span></div>
+    </div>
+
+
+
+    <!-- LLM providers -->
+    <div class="reveal" style="margin-top:36px">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:14px">LLM Providers</h3>
+      <table class="ct llm-t">
+        <thead><tr><th>Provider</th><th>Default Model</th><th>Env Variable</th></tr></thead>
+        <tbody>
+          <tr><td>Groq</td><td class="mono">llama-3.1-70b-versatile</td><td class="mono">GROQ_API_KEY</td></tr>
+          <tr><td>OpenAI</td><td class="mono">gpt-4o</td><td class="mono">OPENAI_API_KEY</td></tr>
+          <tr><td>Anthropic</td><td class="mono">claude-sonnet-4-20250514</td><td class="mono">ANTHROPIC_API_KEY</td></tr>
+          <tr><td>Ollama</td><td class="mono">llama3.1 (local)</td><td class="mono">--</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Waitlist -->
+<section class="cta" id="waitlist">
+  <div class="wrap">
+    <h2 class="reveal">Get early access</h2>
+    <p class="reveal">Launching soon. Join the waitlist to be first.</p>
+    <div class="wl reveal">
+      <input type="email" id="email-input" placeholder="you@company.com" aria-label="Email">
+      <button class="btn btn-primary" onclick="handleWaitlist()">Join Waitlist</button>
+    </div>
+    <p id="wl-msg" style="margin-top:10px;font-size:12px;color:var(--green);display:none"></p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-l">COLT &middot; 2026</div>
+      <div class="footer-r">
+        <a href="#how">How It Works</a>
+        <a href="#docs">Docs</a>
+        <a href="#architecture">Architecture</a>
       </div>
     </div>
-  </section>
+  </div>
+</footer>
 
-  <!-- ========== COMPARISON ========== -->
-  <section class="section" style="background:var(--bg-secondary);">
-    <div class="container">
-      <div class="section-header text-center reveal">
-        <h2>Traditional automation is scripting.<br>COLT is <span class="text-gradient">understanding.</span></h2>
-      </div>
-      <div class="cmp-grid reveal">
-        <div class="cmp-card cmp-old">
-          <div class="cmp-label">Traditional</div>
-          <div class="cmp-items">
-            <div class="ci"><span class="ci-x"></span>Write explicit selectors</div>
-            <div class="ci"><span class="ci-x"></span>Script every interaction</div>
-            <div class="ci"><span class="ci-x"></span>Breaks when UI changes</div>
-            <div class="ci"><span class="ci-x"></span>No modal handling</div>
-            <div class="ci"><span class="ci-x"></span>Constant maintenance</div>
-          </div>
-        </div>
-        <div class="cmp-vs">vs</div>
-        <div class="cmp-card cmp-new">
-          <div class="cmp-label">COLT</div>
-          <div class="cmp-items">
-            <div class="ci"><span class="ci-ok"></span>Discovers selectors automatically</div>
-            <div class="ci"><span class="ci-ok"></span>Natural language input</div>
-            <div class="ci"><span class="ci-ok"></span>Adapts to live DOM</div>
-            <div class="ci"><span class="ci-ok"></span>Auto-detects modals &amp; drawers</div>
-            <div class="ci"><span class="ci-ok"></span>Self-healing fallback chains</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== WAITLIST ========== -->
-  <section class="section waitlist-section" id="waitlist">
-    <div class="container">
-      <div class="waitlist-box reveal" id="home-wl-box">
-        <div class="badge"><span class="badge-dot"></span> Private Beta</div>
-        <h2 id="home-wl-title">Get early access</h2>
-        <p id="home-wl-desc">Join the waitlist. We will reach out when your spot opens.</p>
-        <form class="wl-form" id="wl-form">
-          <input type="email" id="home-wl-email" placeholder="you@company.com" required>
-          <button type="submit" class="btn btn-primary btn-lg" id="home-wl-btn">Join Waitlist</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="footer"><div class="container"><div class="footer-grid">
-    <div class="footer-brand"><a href="index.html" class="logo"><div class="logo-mark">C</div>COLT</a><p>Autonomous browser execution engine for building intelligent web agents.</p></div>
-    <div class="footer-col"><h4>Product</h4><a href="product.html">How It Works</a><a href="docs.html">Documentation</a></div>
-    <div class="footer-col"><h4>Project</h4><a href="about.html">About</a><a href="#waitlist">Join Waitlist</a></div>
-    <div class="footer-col"><h4>Resources</h4><a href="docs.html#quickstart">Quickstart</a><a href="docs.html#architecture">Architecture</a></div>
-  </div><div class="footer-bottom"><span>COLT &mdash; Autonomous Browser Execution Engine</span><a href="#waitlist">Join Waitlist</a></div></div></footer>
-
-  <script src="js/supabase.js"></script>
-  <script src="js/main.js"></script>
+<script>
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');obs.unobserve(el.target)}})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+function handleWaitlist(){const e=document.getElementById('email-input').value;if(!e||!e.includes('@'))return;document.getElementById('wl-msg').textContent="You're on the list.";document.getElementById('wl-msg').style.display='block';document.getElementById('email-input').value=''}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});if(window.innerWidth<768)document.querySelector('.nav-links').style.display='none'})});
+</script>
 </body>
 </html>
