@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crawlfr — Crawler, for real.</title>
+<title>COLT</title>
 <meta name="description" content="Browser automation framework. Describe tasks in English, get production Playwright scripts. Discover once, execute unlimited.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -211,7 +211,7 @@ section{padding:120px 0;position:relative}
 <!-- ══════════ NAV ══════════ -->
 <nav class="nav" id="nav">
   <div class="nav-i">
-    <a href="#" class="logo">crawl<span>fr</span></a>
+    <a href="#" class="logo">COLT</a>
     <div class="nav-l">
       <a href="#usecases">Use Cases</a>
       <a href="#how">How It Works</a>
@@ -231,8 +231,8 @@ section{padding:120px 0;position:relative}
       <div class="hero-text" style="animation:fadeUp .6s ease both">
         <div class="hero-tag"><span class="dot"></span> Closed Beta</div>
         <h1>Browser automation<br>that actually works.</h1>
-        <div class="sub">Crawler, for real.</div>
-        <p>Describe what you want in plain English. Crawlfr discovers your app, executes the task on a live browser, and hands you a production Playwright script.</p>
+        <div class="sub">Context discovery framework.</div>
+        <p>Describe what you want in plain English. Colt discovers your app, executes the task on a live browser, and hands you a production Playwright script.</p>
         <div class="hero-btns">
           <a href="#waitlist" class="btn btn-p">Get Early Access</a>
           <a href="#usecases" class="btn btn-g">See Use Cases</a>
@@ -241,7 +241,7 @@ section{padding:120px 0;position:relative}
       <div class="term" style="animation:fadeUp .6s ease .2s both">
         <div class="term-h">
           <div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div>
-          <span class="term-t">crawlfr</span>
+          <span class="term-t">colt</span>
         </div>
         <div class="term-b" id="term-b"></div>
       </div>
@@ -254,7 +254,7 @@ section{padding:120px 0;position:relative}
   <div class="w">
     <div class="sec-label reveal">What You Can Automate</div>
     <div class="sec-title reveal">Real workflows. Not toy demos.</div>
-    <div class="sec-desc reveal">Crawlfr automates the browser tasks your team does manually every week.</div>
+    <div class="sec-desc reveal">COLT automates the browser tasks your team does manually every week.</div>
 
     <div class="uc-grid reveal-s">
 
@@ -262,11 +262,11 @@ section{padding:120px 0;position:relative}
         <div class="uc-top">
           <span class="uc-num">01</span>
           <h3>E2E Test Generation</h3>
-          <p>Describe test scenarios in English. Crawlfr executes them and exports pytest-compatible test files. Plug directly into CI/CD — no Selenium, no hand-written selectors.</p>
+          <p>Describe test scenarios in English. Colt executes them and exports pytest-compatible test files. Plug directly into CI/CD — no Selenium, no hand-written selectors.</p>
           <div class="uc-tags"><span class="uc-tag">pytest</span><span class="uc-tag">CI/CD</span><span class="uc-tag">regression</span><span class="uc-tag">coverage</span></div>
         </div>
         <div class="uc-code"><span class="c"># Generate a full test suite</span>
-crawlfr execute <span class="s">"Create user, verify in table, delete"</span> \
+colt execute <span class="s">"Create user, verify in table, delete"</span> \
   <span class="k">--react --record</span> <span class="s">test_user_crud.py</span>
 
 <span class="c"># Run it in CI</span>
@@ -277,11 +277,11 @@ pytest test_user_crud.py <span class="k">--headed</span></div>
         <div class="uc-top">
           <span class="uc-num">02</span>
           <h3>Internal Tool Automation</h3>
-          <p>Automate repetitive workflows on admin panels, CRMs, and dashboards. Crawlfr navigates Salesforce, Zendesk, Retool — including Shadow DOM and iframe-heavy UIs that break other tools.</p>
+          <p>Automate repetitive workflows on admin panels, CRMs, and dashboards. Colt navigates Salesforce, Zendesk, Retool — including Shadow DOM and iframe-heavy UIs that break other tools.</p>
           <div class="uc-tags"><span class="uc-tag">Salesforce</span><span class="uc-tag">admin panels</span><span class="uc-tag">Shadow DOM</span><span class="uc-tag">iframes</span></div>
         </div>
         <div class="uc-code"><span class="c"># Automate a Salesforce workflow</span>
-crawlfr execute <span class="s">"Create a new lead with company Acme \
+colt execute <span class="s">"Create a new lead with company Acme \
   and status Qualified"</span> <span class="k">--react --record</span> <span class="s">lead.py</span>
 
 <span class="c"># Replay it daily via cron</span>
@@ -292,11 +292,11 @@ python lead.py</div>
         <div class="uc-top">
           <span class="uc-num">03</span>
           <h3>Onboarding Flow Validation</h3>
-          <p>Verify that signup, onboarding, and checkout flows work end-to-end after every deploy. Crawlfr fills forms, handles multi-step wizards, and catches regressions before users do.</p>
+          <p>Verify that signup, onboarding, and checkout flows work end-to-end after every deploy. Colt fills forms, handles multi-step wizards, and catches regressions before users do.</p>
           <div class="uc-tags"><span class="uc-tag">signup flows</span><span class="uc-tag">checkout</span><span class="uc-tag">multi-step</span><span class="uc-tag">deploy checks</span></div>
         </div>
         <div class="uc-code"><span class="c"># Validate onboarding after deploy</span>
-crawlfr execute <span class="s">"Sign up with email test@co.com, \
+colt execute <span class="s">"Sign up with email test@co.com, \
   complete profile setup, verify dashboard loads"</span> \
   <span class="k">--react --record</span> <span class="s">test_onboarding.py</span></div>
       </div>
@@ -309,7 +309,7 @@ crawlfr execute <span class="s">"Sign up with email test@co.com, \
           <div class="uc-tags"><span class="uc-tag">codegen</span><span class="uc-tag">typed functions</span><span class="uc-tag">bulk ops</span><span class="uc-tag">CSV import</span></div>
         </div>
         <div class="uc-code"><span class="c"># Generate functions from all discovered forms</span>
-crawlfr generate <span class="s">automation.py</span>
+colt generate <span class="s">automation.py</span>
 
 <span class="c"># Use in your own scripts</span>
 from automation import create_user, update_billing
@@ -325,7 +325,7 @@ await create_user(email=<span class="s">"a@co.com"</span>, role=<span class="s">
   <div class="w">
     <div class="sec-label reveal">How It Works</div>
     <div class="sec-title reveal">Four phases. Persistent intelligence.</div>
-    <div class="sec-desc reveal">Crawlfr learns your app once — then executes unlimited tasks from that knowledge.</div>
+    <div class="sec-desc reveal">Colt learns your app once — then executes unlimited tasks from that knowledge.</div>
 
     <div class="pipe reveal">
       <div class="pipe-n">
@@ -391,10 +391,10 @@ await create_user(email=<span class="s">"a@co.com"</span>, role=<span class="s">
 <section id="compare" style="border-top:1px solid var(--border)">
   <div class="w">
     <div class="sec-label reveal">Compare</div>
-    <div class="sec-title reveal">What makes Crawlfr different</div>
+    <div class="sec-title reveal">What makes Colt different</div>
 
     <table class="cmp reveal">
-      <thead><tr><th></th><th>Manual Playwright</th><th>AI Browser Agents</th><th class="hl">Crawlfr</th></tr></thead>
+      <thead><tr><th></th><th>Manual Playwright</th><th>AI Browser Agents</th><th class="hl">Colt</th></tr></thead>
       <tbody>
         <tr><td>Selector authoring</td><td>Write by hand</td><td class="n">Not needed</td><td class="hl y">Not needed</td></tr>
         <tr><td>App knowledge</td><td class="n">None</td><td class="n">Starts fresh each run</td><td class="hl y">Persistent knowledge base</td></tr>
@@ -426,8 +426,8 @@ await create_user(email=<span class="s">"a@co.com"</span>, role=<span class="s">
         <div class="doc-c">
           <h3>Install</h3>
           <p>Python 3.10+ and Node.js required.</p>
-          <div class="code"><span class="c"># Install Crawlfr</span>
-pip install crawlfr
+          <div class="code"><span class="c"># Install Colt</span>
+pip install colt-automation
 playwright install chromium
 
 <span class="c"># Set your LLM key</span>
@@ -436,7 +436,7 @@ export GROQ_API_KEY=your-key-here</div>
         <div class="doc-c">
           <h3>Initialize</h3>
           <p>Generates config, output dirs, installs browsers.</p>
-          <div class="code">crawlfr init my-app \
+          <div class="code">colt init my-app \
   <span class="k">--url</span> <span class="s">http://localhost:3000</span> \
   <span class="k">--llm</span> groq</div>
         </div>
@@ -444,15 +444,15 @@ export GROQ_API_KEY=your-key-here</div>
           <h3>Discover</h3>
           <p>Crawls your app and builds the knowledge base.</p>
           <div class="code"><span class="c"># Headless</span>
-crawlfr discover
+colt discover
 
 <span class="c"># Watch in browser</span>
-crawlfr discover <span class="k">--no-headless</span></div>
+colt discover <span class="k">--no-headless</span></div>
         </div>
         <div class="doc-c">
           <h3>Execute + Record</h3>
           <p>Run a task and export a Playwright script.</p>
-          <div class="code">crawlfr execute \
+          <div class="code">colt execute \
   <span class="s">"Create admin user"</span> \
   <span class="k">--react --record</span> <span class="s">replay.py</span></div>
         </div>
@@ -461,17 +461,17 @@ crawlfr discover <span class="k">--no-headless</span></div>
 
     <!-- CLI -->
     <div class="doc-panel" id="tab-cli">
-      <div class="cli-row"><span class="cli-cmd">crawlfr init &lt;name&gt; --url &lt;url&gt; --llm &lt;provider&gt;</span><span class="cli-dsc">Initialize project with config and browser setup</span></div>
-      <div class="cli-row"><span class="cli-cmd">crawlfr discover [-c config.yaml] [--no-headless]</span><span class="cli-dsc">Crawl the app and build knowledge base</span></div>
-      <div class="cli-row"><span class="cli-cmd">crawlfr execute "task" --react [--record file.py]</span><span class="cli-dsc">Execute a task with the ReAct agent</span></div>
-      <div class="cli-row"><span class="cli-cmd">crawlfr generate output.py [--dry-run]</span><span class="cli-dsc">Generate typed functions from discovered forms</span></div>
-      <div class="cli-row"><span class="cli-cmd">crawlfr record trace.json output.py --format &lt;fmt&gt;</span><span class="cli-dsc">Convert execution log to script / pytest / json / all</span></div>
-      <div class="cli-row"><span class="cli-cmd">crawlfr search "query" [-n 5]</span><span class="cli-dsc">Search knowledge base for matching app states</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt init &lt;name&gt; --url &lt;url&gt; --llm &lt;provider&gt;</span><span class="cli-dsc">Initialize project with config and browser setup</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt discover [-c config.yaml] [--no-headless]</span><span class="cli-dsc">Crawl the app and build knowledge base</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt execute "task" --react [--record file.py]</span><span class="cli-dsc">Execute a task with the ReAct agent</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt generate output.py [--dry-run]</span><span class="cli-dsc">Generate typed functions from discovered forms</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt record trace.json output.py --format &lt;fmt&gt;</span><span class="cli-dsc">Convert execution log to script / pytest / json / all</span></div>
+      <div class="cli-row"><span class="cli-cmd">colt search "query" [-n 5]</span><span class="cli-dsc">Search knowledge base for matching app states</span></div>
     </div>
 
     <!-- Output -->
     <div class="doc-panel" id="tab-output">
-      <div class="code" style="max-width:520px"><span class="c">crawlfr_output/</span>
+      <div class="code" style="max-width:520px"><span class="c">colt_output/</span>
 ├── discovery/
 │   ├── behavior_map.json
 │   ├── api_schema.json
@@ -521,7 +521,7 @@ crawlfr discover <span class="k">--no-headless</span></div>
 <footer class="ft">
   <div class="w">
     <div class="ft-i">
-      <div class="ft-l">crawlfr &middot; 2026</div>
+      <div class="ft-l">Colt &middot; 2026</div>
       <div class="ft-r">
         <a href="#usecases">Use Cases</a>
         <a href="#how">How It Works</a>
@@ -567,16 +567,16 @@ function handleWL(){
 
 // Terminal typing animation
 const lines=[
-  {type:'cmd',text:'$ crawlfr discover -c myapp.yaml'},
+  {type:'cmd',text:'$ colt discover -c myapp.yaml'},
   {type:'out',text:'  Crawling http://localhost:3000...'},
   {type:'out',text:'  47 states | 312 elements | 89 forms mapped'},
   {type:'gap'},
-  {type:'cmd',text:'$ crawlfr execute "Create admin user with email admin@co.com" --react --record replay.py'},
+  {type:'cmd',text:'$ colt execute "Create admin user with email admin@co.com" --react --record replay.py'},
   {type:'out',text:'  ReAct: 8 steps | 12.3s'},
   {type:'out',text:'  Task complete — saved to replay.py'},
   {type:'gap'},
   {type:'cmd',text:'$ python replay.py'},
-  {type:'out',text:'  Standalone script — runs without Crawlfr'},
+  {type:'out',text:'  Standalone script — runs without Colt'},
 ];
 const tb=document.getElementById('term-b');
 let li=0,ci=0,cur=null;
