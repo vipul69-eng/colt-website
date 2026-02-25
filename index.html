@@ -3,437 +3,611 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COLT — Browser Automation Framework</title>
-<meta name="description" content="Describe tasks in plain English. Get production-ready Playwright scripts. COLT discovers your web app, executes tasks autonomously, and exports reusable code.">
-<link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Crawlfr — Crawler, for real.</title>
+<meta name="description" content="Browser automation framework. Describe tasks in English, get production Playwright scripts. Discover once, execute unlimited.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ══════════ Tokens ══════════ */
 :root{
-  --bg:#09090b;--bg-2:#111113;--bg-3:#18181b;
-  --border:#27272a;--border-2:#3f3f46;
-  --text:#fafafa;--text-2:#d4d4d8;--text-3:#a1a1aa;--text-4:#71717a;
-  --accent:#818cf8;--accent-2:#6366f1;--accent-dim:rgba(129,140,248,.1);
-  --green:#34d399;
-  --radius:12px;--radius-sm:8px;
-  --font:'General Sans',system-ui,sans-serif;
-  --mono:'JetBrains Mono',monospace;
-  --max:1100px;
+  --bg:#07070a;--bg-e:#0c0c10;--bg-s:#111116;--bg-c:#16161c;
+  --border:#1e1e26;--border-h:#2a2a35;--border-a:#3d3d4e;
+  --t1:#f0f0f3;--t2:#c8c8d0;--t3:#8e8e9a;--t4:#5c5c6a;
+  --ac:#6c72cb;--ac-h:#8288e5;--ac-bg:rgba(108,114,203,.08);--ac-bg2:rgba(108,114,203,.14);
+  --grn:#3dd68c;--grn-bg:rgba(61,214,140,.08);
+  --amb:#e5a63d;--red:#e55d5d;
+  --r:10px;--r-s:6px;
+  --sans:'Instrument Sans',system-ui,sans-serif;
+  --mono:'Geist Mono','JetBrains Mono',monospace;
+  --w:1140px;
 }
+/* ══════════ Reset ══════════ */
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;background:var(--bg);color:var(--text);font-family:var(--font)}
-body{-webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden}
-a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
-::selection{background:var(--accent-2);color:#fff}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.02'/%3E%3C/svg%3E")}
+html{background:var(--bg);color:var(--t1);font-family:var(--sans);scroll-behavior:smooth}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;line-height:1.55}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--ac);color:#fff}
 
-.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
-section{padding:96px 0}
-section+section{border-top:1px solid var(--border)}
+/* Texture */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.35;
+  background:url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E")}
 
-/* Nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(9,9,11,.8);border-bottom:1px solid var(--border)}
-.nav-inner{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:54px}
-.nav-logo{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.1em;color:var(--text)}
-.nav-links{display:flex;gap:24px;align-items:center}
-.nav-links a{font-size:13px;font-weight:500;color:var(--text-3);transition:color .2s}
-.nav-links a:hover{color:var(--text);text-decoration:none}
-.nav-cta{font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;background:var(--accent-2);color:#fff;transition:background .2s}
-.nav-cta:hover{background:var(--accent);text-decoration:none}
-.hamburger{display:none;background:none;border:none;color:var(--text);font-size:20px;cursor:pointer}
+.w{max-width:var(--w);margin:0 auto;padding:0 28px}
+section{padding:120px 0;position:relative}
 
-/* Hero */
-.hero{padding:130px 0 88px;text-align:center;position:relative}
-.hero::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none}
-.hero-badge{display:inline-block;padding:4px 14px;border-radius:100px;border:1px solid var(--border-2);font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:22px;background:var(--bg-2);letter-spacing:.02em;animation:fadeUp .6s ease both}
-.hero h1{font-size:clamp(34px,5vw,58px);font-weight:700;line-height:1.08;letter-spacing:-.03em;margin-bottom:18px;animation:fadeUp .6s ease .1s both}
-.hero h1 em{font-style:normal;color:var(--accent)}
-.hero p{font-size:17px;color:var(--text-3);max-width:520px;margin:0 auto 28px;line-height:1.6;animation:fadeUp .6s ease .2s both}
-.hero-actions{display:flex;gap:10px;justify-content:center;animation:fadeUp .6s ease .3s both}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
-.btn-primary{background:var(--accent-2);color:#fff}.btn-primary:hover{background:var(--accent);text-decoration:none}
-.btn-ghost{background:transparent;color:var(--text-2);border:1px solid var(--border-2)}.btn-ghost:hover{border-color:var(--text-4);color:var(--text);text-decoration:none}
+/* ══════════ Nav ══════════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;transition:background .3s,border-color .3s}
+.nav.scrolled{background:rgba(7,7,10,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-i{max-width:var(--w);margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:var(--mono);font-weight:600;font-size:15px;letter-spacing:.04em;color:var(--t1)}
+.logo span{color:var(--ac)}
+.nav-l{display:flex;align-items:center;gap:32px}
+.nav-l a{font-size:13px;color:var(--t3);font-weight:500;transition:color .15s}
+.nav-l a:hover{color:var(--t1)}
+.nav-btn{font-size:12px;font-weight:600;padding:7px 18px;border-radius:var(--r-s);background:var(--ac);color:#fff;transition:background .15s}
+.nav-btn:hover{background:var(--ac-h)}
+.mob-btn{display:none;background:none;border:none;color:var(--t1);font-size:18px;cursor:pointer}
+
+/* ══════════ Hero ══════════ */
+.hero{padding:160px 0 100px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-180px;left:50%;transform:translateX(-50%);
+  width:900px;height:900px;border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(108,114,203,.07) 0%,transparent 65%);pointer-events:none}
+.hero::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent)}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.hero-text{max-width:480px}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;
+  font-weight:500;color:var(--t3);padding:5px 14px;border-radius:100px;border:1px solid var(--border);
+  background:var(--bg-e);margin-bottom:24px}
+.hero-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--grn)}
+.hero h1{font-size:48px;font-weight:700;line-height:1.06;letter-spacing:-.035em;margin-bottom:16px}
+.hero h1 br{display:block}
+.hero .sub{font-family:var(--mono);font-size:13px;color:var(--t4);letter-spacing:.01em;margin-bottom:20px}
+.hero p{font-size:16px;color:var(--t3);line-height:1.6;margin-bottom:32px;max-width:420px}
+.hero-btns{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;padding:10px 22px;border-radius:var(--r-s);
+  font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .15s}
+.btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--ac-h)}
+.btn-g{background:transparent;color:var(--t2);border:1px solid var(--border-h)}.btn-g:hover{border-color:var(--border-a);color:var(--t1)}
 
 /* Terminal */
-.terminal{max-width:640px;margin:40px auto 0;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-2);overflow:hidden;text-align:left;animation:fadeUp .6s ease .4s both}
-.term-bar{display:flex;align-items:center;gap:6px;padding:9px 14px;background:var(--bg-3);border-bottom:1px solid var(--border)}
-.term-dot{width:9px;height:9px;border-radius:50%}.term-dot.r{background:#f87171}.term-dot.y{background:#fbbf24}.term-dot.g{background:#34d399}
-.term-title{margin-left:8px;font-family:var(--mono);font-size:11px;color:var(--text-4)}
-.term-body{padding:14px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.8;color:var(--text-3)}
-.term-body .p{color:var(--text-4)}.term-body .c{color:var(--text)}.term-body .f{color:var(--accent)}.term-body .s{color:var(--green)}.term-body .o{color:var(--text-4);font-style:italic}
+.term{border:1px solid var(--border);border-radius:var(--r);background:var(--bg-e);overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.02) inset}
+.term-h{display:flex;align-items:center;gap:7px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg-s)}
+.td{width:10px;height:10px;border-radius:50%}.td-r{background:#e55d5d}.td-y{background:#e5a63d}.td-g{background:#3dd68c}
+.term-t{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--t4)}
+.term-b{padding:18px 20px;font-family:var(--mono);font-size:12px;line-height:2;min-height:200px}
+.term-b .ln{display:block;opacity:0;animation:termIn .3s ease forwards}
+.term-b .pr{color:var(--t4)}.term-b .cm{color:var(--t1)}.term-b .fl{color:var(--ac)}
+.term-b .st{color:var(--grn)}.term-b .ou{color:var(--t4);font-style:italic}
+@keyframes termIn{to{opacity:1}}
 
-/* Section headings */
-.sl{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.st{font-size:clamp(26px,3vw,36px);font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-bottom:14px}
-.sd{font-size:15px;color:var(--text-3);max-width:520px;line-height:1.6;margin-bottom:44px}
+/* ══════════ Use Cases ══════════ */
+.sec-label{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ac);margin-bottom:12px}
+.sec-title{font-size:clamp(28px,3.2vw,38px);font-weight:700;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px}
+.sec-desc{font-size:15px;color:var(--t3);max-width:480px;margin-bottom:52px;line-height:1.6}
 
-/* Steps */
-.steps{display:flex;flex-direction:column;gap:0;position:relative}
-.steps::before{content:'';position:absolute;left:21px;top:22px;bottom:22px;width:1px;background:var(--border)}
-.step{display:flex;gap:22px;padding:24px 0;position:relative}
-.step-n{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:700;border:1.5px solid var(--border-2);background:var(--bg);color:var(--text-4);flex-shrink:0;z-index:2;transition:all .3s}
-.step:hover .step-n{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
-.step-c h3{font-size:17px;font-weight:700;margin-bottom:4px}
-.step-c p{font-size:13.5px;color:var(--text-3);line-height:1.6}
-.tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px}
-.tag{font-family:var(--mono);font-size:10px;font-weight:500;padding:3px 9px;border-radius:100px;border:1px solid var(--border);color:var(--text-4);background:var(--bg-2)}
+.uc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.uc{border:1px solid var(--border);border-radius:var(--r);background:var(--bg-e);overflow:hidden;
+  transition:border-color .2s,transform .2s}
+.uc:hover{border-color:var(--border-h);transform:translateY(-3px)}
+.uc-top{padding:28px 28px 0}
+.uc-num{font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:10px;display:block}
+.uc h3{font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+.uc p{font-size:13px;color:var(--t3);line-height:1.55;margin-bottom:16px}
+.uc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:20px}
+.uc-tag{font-family:var(--mono);font-size:9.5px;font-weight:500;padding:3px 10px;
+  border-radius:100px;border:1px solid var(--border);color:var(--t4)}
+.uc-code{font-family:var(--mono);font-size:11px;padding:14px 20px;border-top:1px solid var(--border);
+  background:var(--bg);color:var(--t3);line-height:1.7;white-space:pre;overflow-x:auto}
+.uc-code .c{color:var(--t4);font-style:italic}.uc-code .k{color:var(--ac)}.uc-code .s{color:var(--grn)}
 
-/* Value cards */
-.vg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.vc{border:1px solid var(--border);border-radius:var(--radius);padding:24px 22px;background:var(--bg-2);transition:border-color .2s,transform .2s}
-.vc:hover{border-color:var(--border-2);transform:translateY(-2px)}
-.vc h3{font-size:15px;font-weight:700;margin-bottom:5px}
-.vc p{font-size:12.5px;color:var(--text-3);line-height:1.55}
+/* ══════════ Pipeline ══════════ */
+.pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:40px}
+.pipe-n{border:1px solid var(--border);border-radius:var(--r);padding:24px 20px;background:var(--bg-e);
+  position:relative;transition:border-color .2s}
+.pipe-n:hover{border-color:var(--border-h)}
+.pipe-n::after{content:'\2192';position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font-size:16px;color:var(--t4);z-index:2}
+.pipe-n:last-child::after{display:none}
+.pipe-num{font-family:var(--mono);font-size:10px;color:var(--ac);display:block;margin-bottom:10px}
+.pipe-n h4{font-size:14px;font-weight:700;margin-bottom:6px}
+.pipe-n p{font-size:11.5px;color:var(--t4);line-height:1.45}
+.pipe-n ul{list-style:none;margin-top:8px}
+.pipe-n li{font-size:10.5px;color:var(--t3);padding:2px 0;display:flex;align-items:center;gap:6px}
+.pipe-n li::before{content:'';width:3px;height:3px;border-radius:50%;background:var(--border-a);flex-shrink:0}
 
-/* Handles list */
-.handles{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;margin-top:32px}
-.handle{font-size:13px;color:var(--text-3);padding:6px 0;display:flex;align-items:center;gap:8px}
-.handle::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+/* Stats */
+.st-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:24px}
+.st-i{padding:20px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg-e);text-align:center}
+.st-i .n{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--t1);letter-spacing:-.02em}
+.st-i .l{font-size:11px;color:var(--t4);margin-top:2px}
 
-/* Comparison table */
-.ct{width:100%;border-collapse:collapse;margin-top:32px;font-size:12.5px}
-.ct th{text-align:left;padding:10px 14px;font-weight:600;font-size:11px;color:var(--text-4);letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg-2)}
-.ct td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-3)}
-.ct tr:last-child td{border-bottom:none}
-.ct .y{color:var(--green);font-weight:600}.ct .n{color:var(--text-4)}
-.ct .hl{background:var(--accent-dim)}.ct .hl td{color:var(--text)}
+/* ══════════ Comparison ══════════ */
+.cmp{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:32px}
+.cmp th{text-align:left;padding:12px 16px;font-weight:600;font-size:10.5px;color:var(--t4);
+  letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg-s)}
+.cmp td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--t3)}
+.cmp tr:last-child td{border-bottom:none}
+.cmp .y{color:var(--grn);font-weight:600}.cmp .n{color:var(--t4)}
+.cmp .hl{background:var(--ac-bg)}.cmp .hl td{color:var(--t2)}
 
-/* Architecture */
-.arch{display:flex;align-items:stretch;gap:2px;margin-top:28px}
-.arch-n{flex:1;border:1px solid var(--border);border-radius:var(--radius);padding:18px 14px;background:var(--bg-2);text-align:center}
-.arch-n .num{font-family:var(--mono);font-size:10px;color:var(--accent);display:block;margin-bottom:6px}
-.arch-n h4{font-size:12.5px;font-weight:700;margin-bottom:3px}
-.arch-n p{font-size:10.5px;color:var(--text-4);line-height:1.4}
-.arch-a{display:flex;align-items:center;color:var(--text-4);font-size:16px;padding:0 2px}
+/* ══════════ Docs ══════════ */
+.doc-tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:24px}
+.doc-tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--t4);cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .15s;margin-bottom:-1px}
+.doc-tab.active{color:var(--t1);border-bottom-color:var(--ac)}
+.doc-tab:hover{color:var(--t2)}
+.doc-panel{display:none}.doc-panel.active{display:block}
 
-/* Stats bar */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px}
-.stat{border:1px solid var(--border);border-radius:var(--radius);padding:20px 18px;background:var(--bg-2);text-align:center}
-.stat .n{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--text);margin-bottom:2px}
-.stat .l{font-size:11px;color:var(--text-4)}
+.doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.doc-c{border:1px solid var(--border);border-radius:var(--r);padding:22px;background:var(--bg-e)}
+.doc-c h3{font-size:14px;font-weight:700;margin-bottom:4px}
+.doc-c p{font-size:12px;color:var(--t3);margin-bottom:10px}
+.code{font-family:var(--mono);font-size:11px;padding:14px 16px;border-radius:var(--r-s);
+  background:var(--bg);border:1px solid var(--border);color:var(--t3);overflow-x:auto;
+  line-height:1.75;white-space:pre}
+.code .c{color:var(--t4);font-style:italic}.code .k{color:var(--ac)}.code .s{color:var(--grn)}
 
-/* Docs */
-.dg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.dc{border:1px solid var(--border);border-radius:var(--radius);padding:22px;background:var(--bg-2);transition:border-color .2s}
-.dc:hover{border-color:var(--border-2)}
-.dc h3{font-size:14px;font-weight:700;margin-bottom:5px}
-.dc p{font-size:12.5px;color:var(--text-3);line-height:1.5;margin-bottom:10px}
-.code{font-family:var(--mono);font-size:11.5px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border);color:var(--text-3);overflow-x:auto;line-height:1.7;white-space:pre}
-.code .cm{color:var(--text-4);font-style:italic}.code .k{color:var(--accent)}.code .s{color:var(--green)}
+.cli-row{display:flex;gap:16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:baseline}
+.cli-cmd{font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--t1);min-width:340px;flex-shrink:0}
+.cli-dsc{font-size:12px;color:var(--t3)}
 
-/* CLI ref */
-.cli-row{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);align-items:baseline}
-.cli-cmd{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text);min-width:320px;flex-shrink:0}
-.cli-desc{font-size:12.5px;color:var(--text-3)}
+.llm-t{max-width:520px}.llm-t td{font-size:11.5px}.llm-t .m{font-family:var(--mono);font-size:10.5px;color:var(--t3)}
 
-/* Output tree */
-.tree{max-width:480px}
-
-/* LLM table */
-.llm-t{max-width:520px}
-.llm-t td,.llm-t th{font-size:12px}
-.llm-t .mono{font-family:var(--mono);font-size:11px}
-
-/* CTA */
-.cta{text-align:center;padding:96px 0;position:relative}
-.cta::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:480px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.07) 0%,transparent 70%);pointer-events:none}
-.cta h2{font-size:clamp(26px,3.5vw,40px);font-weight:700;letter-spacing:-.02em;margin-bottom:14px}
-.cta p{font-size:15px;color:var(--text-3);margin-bottom:28px}
+/* ══════════ CTA ══════════ */
+.cta{text-align:center;position:relative}
+.cta::before{content:'';position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);
+  width:600px;height:500px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(108,114,203,.05) 0%,transparent 60%);pointer-events:none}
+.cta h2{font-size:clamp(28px,3.5vw,42px);font-weight:700;letter-spacing:-.025em;margin-bottom:12px}
+.cta p{font-size:15px;color:var(--t3);margin-bottom:28px}
 .wl{display:flex;gap:8px;justify-content:center;max-width:400px;margin:0 auto}
-.wl input{flex:1;padding:9px 14px;border-radius:var(--radius-sm);border:1px solid var(--border-2);background:var(--bg-3);color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:border-color .2s}
-.wl input:focus{border-color:var(--accent)}.wl input::placeholder{color:var(--text-4)}
+.wl input{flex:1;padding:10px 16px;border-radius:var(--r-s);border:1px solid var(--border-h);
+  background:var(--bg-s);color:var(--t1);font-size:13px;font-family:var(--sans);
+  outline:none;transition:border-color .2s}
+.wl input:focus{border-color:var(--ac)}.wl input::placeholder{color:var(--t4)}
+#wl-msg{margin-top:10px;font-size:12px;color:var(--grn);display:none}
 
-/* Footer */
-footer{border-top:1px solid var(--border);padding:28px 0}
-.footer-inner{display:flex;justify-content:space-between;align-items:center}
-.footer-l{font-size:11px;color:var(--text-4)}
-.footer-r{display:flex;gap:18px}.footer-r a{font-size:11px;color:var(--text-4)}.footer-r a:hover{color:var(--text-3)}
+/* ══════════ Footer ══════════ */
+.ft{border-top:1px solid var(--border);padding:28px 0}
+.ft-i{display:flex;justify-content:space-between;align-items:center}
+.ft-l{font-size:11px;color:var(--t4);font-family:var(--mono)}
+.ft-r{display:flex;gap:20px}.ft-r a{font-size:11px;color:var(--t4);transition:color .15s}.ft-r a:hover{color:var(--t2)}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-.reveal{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+/* ══════════ Animations ══════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .55s cubic-bezier(.25,.46,.45,.94),transform .55s cubic-bezier(.25,.46,.45,.94)}
+.reveal.v{opacity:1;transform:translateY(0)}
+/* Stagger children */
+.reveal-s>.reveal:nth-child(1){transition-delay:.05s}
+.reveal-s>.reveal:nth-child(2){transition-delay:.1s}
+.reveal-s>.reveal:nth-child(3){transition-delay:.15s}
+.reveal-s>.reveal:nth-child(4){transition-delay:.2s}
 
-@media(max-width:768px){
-  .nav-links{display:none}.hamburger{display:block}
-  .vg,.dg,.stats{grid-template-columns:1fr}.handles{grid-template-columns:1fr}
-  .arch{flex-direction:column}.arch-a{transform:rotate(90deg);justify-content:center}
-  .wl{flex-direction:column}.cli-row{flex-direction:column;gap:3px}.cli-cmd{min-width:auto}
-  .footer-inner{flex-direction:column;gap:10px;text-align:center}
-  section{padding:64px 0}
+/* ══════════ Responsive ══════════ */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .hero h1{font-size:36px}
+  .uc-grid,.doc-grid{grid-template-columns:1fr}
+  .pipe,.st-bar{grid-template-columns:1fr 1fr}
+  .pipe-n::after{display:none}
+  .nav-l{display:none}.mob-btn{display:block}
+  .cli-row{flex-direction:column;gap:2px}.cli-cmd{min-width:auto}
+  section{padding:80px 0}
+  .wl{flex-direction:column}
+  .ft-i{flex-direction:column;gap:10px;text-align:center}
+}
+@media(max-width:560px){
+  .pipe,.st-bar{grid-template-columns:1fr}
+  .hero{padding:120px 0 72px}
 }
 </style>
 </head>
 <body>
 
-<!-- Nav -->
-<nav>
-  <div class="nav-inner">
-    <a href="#" class="nav-logo">COLT</a>
-    <div class="nav-links">
+<!-- ══════════ NAV ══════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-i">
+    <a href="#" class="logo">crawl<span>fr</span></a>
+    <div class="nav-l">
+      <a href="#usecases">Use Cases</a>
       <a href="#how">How It Works</a>
-      <a href="#why">Why COLT</a>
-      <a href="#architecture">Architecture</a>
+      <a href="#compare">Compare</a>
       <a href="#docs">Docs</a>
-      <a href="#waitlist" class="nav-cta">Get Early Access</a>
+      <a href="#waitlist" class="nav-btn">Get Early Access</a>
     </div>
-    <button class="hamburger" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'" aria-label="Menu">&#9776;</button>
+    <button class="mob-btn" onclick="this.nextElementSibling.classList.toggle('show')" aria-label="Menu">&#9776;</button>
+    <div class="mob-menu" style="display:none"></div>
   </div>
 </nav>
 
-<!-- Hero -->
+<!-- ══════════ HERO ══════════ -->
 <section class="hero">
-  <div class="wrap">
-    <div class="hero-badge">Closed Beta</div>
-    <h1>Describe a task.<br><em>Get a Playwright script.</em></h1>
-    <p>COLT discovers your web app, executes browser tasks from plain English, and exports production-ready automation code.</p>
-    <div class="hero-actions">
-      <a href="#waitlist" class="btn btn-primary">Get Early Access</a>
-      <a href="#how" class="btn btn-ghost">See How It Works</a>
-    </div>
-    <div class="terminal">
-      <div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span class="term-title">terminal</span></div>
-      <div class="term-body"><span class="p">$</span> <span class="c">colt discover</span> <span class="f">-c</span> <span class="s">myapp.yaml</span>
-<span class="o">  47 states, 312 elements, 89 forms mapped</span>
-
-<span class="p">$</span> <span class="c">colt execute</span> <span class="s">"Create user with email admin@co.com"</span> <span class="f">--react --record</span> <span class="s">replay.py</span>
-<span class="o">  Task complete — 8 steps, 12.3s — saved to replay.py</span>
-
-<span class="p">$</span> <span class="c">python replay.py</span>
-<span class="o">  Standalone Playwright script — runs without COLT</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- How It Works -->
-<section id="how">
-  <div class="wrap">
-    <div class="sl reveal">How It Works</div>
-    <div class="st reveal">Four steps. One command each.</div>
-    <div class="sd reveal">COLT learns your app by exploring it — then executes anything you describe.</div>
-
-    <div class="steps">
-      <div class="step reveal">
-        <div class="step-n">01</div>
-        <div class="step-c">
-          <h3>Discover your app</h3>
-          <p>Autonomously crawls your web application. Clicks buttons, opens modals, switches tabs, scrolls lists. Maps every page, form, and interactive element with exact CSS selectors. Handles Shadow DOM and cross-origin iframes.</p>
-          <div class="tags"><span class="tag">BFS crawl</span><span class="tag">Shadow DOM piercing</span><span class="tag">Iframe traversal</span><span class="tag">Scroll detection</span><span class="tag">Pagination guard</span></div>
+  <div class="w">
+    <div class="hero-grid">
+      <div class="hero-text" style="animation:fadeUp .6s ease both">
+        <div class="hero-tag"><span class="dot"></span> Closed Beta</div>
+        <h1>Browser automation<br>that actually works.</h1>
+        <div class="sub">Crawler, for real.</div>
+        <p>Describe what you want in plain English. Crawlfr discovers your app, executes the task on a live browser, and hands you a production Playwright script.</p>
+        <div class="hero-btns">
+          <a href="#waitlist" class="btn btn-p">Get Early Access</a>
+          <a href="#usecases" class="btn btn-g">See Use Cases</a>
         </div>
       </div>
-      <div class="step reveal">
-        <div class="step-n">02</div>
-        <div class="step-c">
-          <h3>Build a knowledge base</h3>
-          <p>Each state is summarized by an LLM and stored as a vector embedding. Creates a persistent, searchable index of your entire app. Discover once — then run unlimited tasks without re-crawling.</p>
-          <div class="tags"><span class="tag">LLM summaries</span><span class="tag">Vector embeddings</span><span class="tag">ChromaDB</span><span class="tag">State graph</span><span class="tag">API schema capture</span></div>
+      <div class="term" style="animation:fadeUp .6s ease .2s both">
+        <div class="term-h">
+          <div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div>
+          <span class="term-t">crawlfr</span>
         </div>
-      </div>
-      <div class="step reveal">
-        <div class="step-n">03</div>
-        <div class="step-c">
-          <h3>Execute any task</h3>
-          <p>Describe what you want in plain English. A ReAct agent observes live DOM state, reasons about the next action, and executes it. Self-heals on failures with fallback chains. Detects and breaks out of infinite loops.</p>
-          <div class="tags"><span class="tag">Observe / Reason / Act</span><span class="tag">Self-healing</span><span class="tag">Loop detection</span><span class="tag">Token budget</span></div>
-        </div>
-      </div>
-      <div class="step reveal">
-        <div class="step-n">04</div>
-        <div class="step-c">
-          <h3>Export reusable code</h3>
-          <p>Every action is traced with full context and exported as standard Playwright Python. Run the output without COLT, modify it by hand, or commit it to your repo. No vendor lock-in.</p>
-          <div class="tags"><span class="tag">Playwright script</span><span class="tag">Pytest test</span><span class="tag">Typed Python functions</span><span class="tag">JSON trace</span></div>
-        </div>
+        <div class="term-b" id="term-b"></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Why COLT -->
-<section id="why">
-  <div class="wrap">
-    <div class="sl reveal">Why COLT</div>
-    <div class="st reveal">Built different from other browser agents</div>
-    <div class="sd reveal">Most AI agents start from scratch every run and produce nothing reusable. COLT remembers your app and outputs real code.</div>
+<!-- ══════════ USE CASES ══════════ -->
+<section id="usecases" style="border-top:1px solid var(--border)">
+  <div class="w">
+    <div class="sec-label reveal">What You Can Automate</div>
+    <div class="sec-title reveal">Real workflows. Not toy demos.</div>
+    <div class="sec-desc reveal">Crawlfr automates the browser tasks your team does manually every week.</div>
 
-    <div class="vg reveal">
-      <div class="vc">
-        <h3>Persistent knowledge</h3>
-        <p>One crawl builds a knowledge base. Task #100 executes as fast as task #1 — no re-exploration, no wasted LLM calls.</p>
+    <div class="uc-grid reveal-s">
+
+      <div class="uc reveal">
+        <div class="uc-top">
+          <span class="uc-num">01</span>
+          <h3>E2E Test Generation</h3>
+          <p>Describe test scenarios in English. Crawlfr executes them and exports pytest-compatible test files. Plug directly into CI/CD — no Selenium, no hand-written selectors.</p>
+          <div class="uc-tags"><span class="uc-tag">pytest</span><span class="uc-tag">CI/CD</span><span class="uc-tag">regression</span><span class="uc-tag">coverage</span></div>
+        </div>
+        <div class="uc-code"><span class="c"># Generate a full test suite</span>
+crawlfr execute <span class="s">"Create user, verify in table, delete"</span> \
+  <span class="k">--react --record</span> <span class="s">test_user_crud.py</span>
+
+<span class="c"># Run it in CI</span>
+pytest test_user_crud.py <span class="k">--headed</span></div>
       </div>
-      <div class="vc">
-        <h3>Code output, not just execution</h3>
-        <p>Every run produces a standalone Playwright script. Run it without COLT, modify it, commit it. The automation outlives the agent.</p>
+
+      <div class="uc reveal">
+        <div class="uc-top">
+          <span class="uc-num">02</span>
+          <h3>Internal Tool Automation</h3>
+          <p>Automate repetitive workflows on admin panels, CRMs, and dashboards. Crawlfr navigates Salesforce, Zendesk, Retool — including Shadow DOM and iframe-heavy UIs that break other tools.</p>
+          <div class="uc-tags"><span class="uc-tag">Salesforce</span><span class="uc-tag">admin panels</span><span class="uc-tag">Shadow DOM</span><span class="uc-tag">iframes</span></div>
+        </div>
+        <div class="uc-code"><span class="c"># Automate a Salesforce workflow</span>
+crawlfr execute <span class="s">"Create a new lead with company Acme \
+  and status Qualified"</span> <span class="k">--react --record</span> <span class="s">lead.py</span>
+
+<span class="c"># Replay it daily via cron</span>
+python lead.py</div>
       </div>
-      <div class="vc">
-        <h3>Handles complex UIs</h3>
-        <p>Shadow DOM components, cross-origin iframes, infinite scroll, modals, tabs, pagination — the edge cases that break other tools.</p>
+
+      <div class="uc reveal">
+        <div class="uc-top">
+          <span class="uc-num">03</span>
+          <h3>Onboarding Flow Validation</h3>
+          <p>Verify that signup, onboarding, and checkout flows work end-to-end after every deploy. Crawlfr fills forms, handles multi-step wizards, and catches regressions before users do.</p>
+          <div class="uc-tags"><span class="uc-tag">signup flows</span><span class="uc-tag">checkout</span><span class="uc-tag">multi-step</span><span class="uc-tag">deploy checks</span></div>
+        </div>
+        <div class="uc-code"><span class="c"># Validate onboarding after deploy</span>
+crawlfr execute <span class="s">"Sign up with email test@co.com, \
+  complete profile setup, verify dashboard loads"</span> \
+  <span class="k">--react --record</span> <span class="s">test_onboarding.py</span></div>
+      </div>
+
+      <div class="uc reveal">
+        <div class="uc-top">
+          <span class="uc-num">04</span>
+          <h3>Data Entry and Bulk Operations</h3>
+          <p>Generate typed Python functions for every form in your app. Import them, call them from scripts, loop over CSVs. Turn manual data entry into a single command.</p>
+          <div class="uc-tags"><span class="uc-tag">codegen</span><span class="uc-tag">typed functions</span><span class="uc-tag">bulk ops</span><span class="uc-tag">CSV import</span></div>
+        </div>
+        <div class="uc-code"><span class="c"># Generate functions from all discovered forms</span>
+crawlfr generate <span class="s">automation.py</span>
+
+<span class="c"># Use in your own scripts</span>
+from automation import create_user, update_billing
+await create_user(email=<span class="s">"a@co.com"</span>, role=<span class="s">"admin"</span>)</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ HOW IT WORKS ══════════ -->
+<section id="how" style="border-top:1px solid var(--border)">
+  <div class="w">
+    <div class="sec-label reveal">How It Works</div>
+    <div class="sec-title reveal">Four phases. Persistent intelligence.</div>
+    <div class="sec-desc reveal">Crawlfr learns your app once — then executes unlimited tasks from that knowledge.</div>
+
+    <div class="pipe reveal">
+      <div class="pipe-n">
+        <span class="pipe-num">01</span>
+        <h4>Discover</h4>
+        <p>Autonomous BFS crawl of your entire app.</p>
+        <ul>
+          <li>Shadow DOM piercing</li>
+          <li>Cross-origin iframes</li>
+          <li>Infinite scroll detection</li>
+          <li>Modal + tab probing</li>
+          <li>Pagination guards</li>
+        </ul>
+      </div>
+      <div class="pipe-n">
+        <span class="pipe-num">02</span>
+        <h4>Index</h4>
+        <p>Builds a persistent semantic knowledge base.</p>
+        <ul>
+          <li>LLM state summaries</li>
+          <li>Vector embeddings</li>
+          <li>State transition graph</li>
+          <li>API schema capture</li>
+          <li>Form field mapping</li>
+        </ul>
+      </div>
+      <div class="pipe-n">
+        <span class="pipe-num">03</span>
+        <h4>Execute</h4>
+        <p>ReAct agent drives the browser in real time.</p>
+        <ul>
+          <li>Observe / Reason / Act</li>
+          <li>Self-healing fallbacks</li>
+          <li>Loop detection + abort</li>
+          <li>Token budget control</li>
+          <li>Dialog auto-handling</li>
+        </ul>
+      </div>
+      <div class="pipe-n">
+        <span class="pipe-num">04</span>
+        <h4>Record</h4>
+        <p>Exports reusable, LLM-free code.</p>
+        <ul>
+          <li>Playwright async scripts</li>
+          <li>Pytest test files</li>
+          <li>Typed Python functions</li>
+          <li>JSON execution traces</li>
+          <li>Step-by-step screenshots</li>
+        </ul>
       </div>
     </div>
 
-    <div class="handles reveal">
-      <div class="handle">Shadow DOM — Salesforce Lightning, Shoelace, Material Web</div>
-      <div class="handle">Cross-origin iframes — Stripe Elements, PayPal, embeds</div>
-      <div class="handle">Infinite scroll and virtual lists</div>
-      <div class="handle">Modals, drawers, and dialogs</div>
-      <div class="handle">Tabbed interfaces and accordions</div>
-      <div class="handle">URL and query-based pagination</div>
-      <div class="handle">Timed UI — toasts, banners, consent popups</div>
-      <div class="handle">Context menus and keyboard shortcuts</div>
+    <div class="st-bar reveal">
+      <div class="st-i"><div class="n">13K+</div><div class="l">Lines of Python</div></div>
+      <div class="st-i"><div class="n">11</div><div class="l">Modules</div></div>
+      <div class="st-i"><div class="n">4</div><div class="l">Export formats</div></div>
+      <div class="st-i"><div class="n">7</div><div class="l">UI detection strategies</div></div>
     </div>
+  </div>
+</section>
 
-    <!-- Comparison -->
-    <table class="ct reveal" style="margin-top:44px">
-      <thead><tr><th>Capability</th><th>Manual Playwright</th><th>Other AI Agents</th><th class="hl">COLT</th></tr></thead>
+<!-- ══════════ COMPARE ══════════ -->
+<section id="compare" style="border-top:1px solid var(--border)">
+  <div class="w">
+    <div class="sec-label reveal">Compare</div>
+    <div class="sec-title reveal">What makes Crawlfr different</div>
+
+    <table class="cmp reveal">
+      <thead><tr><th></th><th>Manual Playwright</th><th>AI Browser Agents</th><th class="hl">Crawlfr</th></tr></thead>
       <tbody>
-        <tr><td>Write selectors by hand</td><td>Required</td><td class="n">Not needed</td><td class="hl y">Not needed</td></tr>
-        <tr><td>Persistent app knowledge</td><td class="n">None</td><td class="n">None — re-explores each run</td><td class="hl y">Yes — discover once</td></tr>
-        <tr><td>Reusable code output</td><td class="y">Yes (you wrote it)</td><td class="n">No — executes only</td><td class="hl y">Scripts + tests + functions</td></tr>
-        <tr><td>Shadow DOM / iframes</td><td>Manual config</td><td class="n">Limited</td><td class="hl y">Full piercing support</td></tr>
-        <tr><td>Self-healing on failure</td><td class="n">Breaks on first error</td><td>Varies</td><td class="hl y">Fallback chains + loop detection</td></tr>
-        <tr><td>Works without LLM after export</td><td class="y">Yes</td><td class="n">No</td><td class="hl y">Exported scripts are LLM-free</td></tr>
+        <tr><td>Selector authoring</td><td>Write by hand</td><td class="n">Not needed</td><td class="hl y">Not needed</td></tr>
+        <tr><td>App knowledge</td><td class="n">None</td><td class="n">Starts fresh each run</td><td class="hl y">Persistent knowledge base</td></tr>
+        <tr><td>Code output</td><td class="y">Yes — you wrote it</td><td class="n">No output</td><td class="hl y">Scripts, tests, functions</td></tr>
+        <tr><td>Shadow DOM + iframes</td><td>Manual config</td><td class="n">Limited</td><td class="hl y">Full piercing support</td></tr>
+        <tr><td>Self-healing</td><td class="n">Fails on first error</td><td>Varies</td><td class="hl y">Fallback chains + loop recovery</td></tr>
+        <tr><td>Runs without LLM</td><td class="y">Yes</td><td class="n">No</td><td class="hl y">Exported code is standalone</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- Architecture -->
-<section id="architecture">
-  <div class="wrap">
-    <div class="sl reveal">Architecture</div>
-    <div class="st reveal">Under the hood</div>
-    <div class="sd reveal">Four-phase pipeline. Python, Playwright, ChromaDB, any OpenAI-compatible LLM.</div>
+<!-- ══════════ DOCS ══════════ -->
+<section id="docs" style="border-top:1px solid var(--border)">
+  <div class="w">
+    <div class="sec-label reveal">Documentation</div>
+    <div class="sec-title reveal">Everything you need to get started</div>
 
-    <div class="arch reveal">
-      <div class="arch-n"><span class="num">01</span><h4>Discovery Engine</h4><p>BFS crawler, sensory engine, Shadow DOM + iframe traversal, modal probing</p></div>
-      <div class="arch-a">&rarr;</div>
-      <div class="arch-n"><span class="num">02</span><h4>Intelligence Layer</h4><p>LLM summarization, vector embeddings, state graph, API schema inference</p></div>
-      <div class="arch-a">&rarr;</div>
-      <div class="arch-n"><span class="num">03</span><h4>ReAct Executor</h4><p>Observe, Reason, Act loop with self-healing, loop detection, token budgets</p></div>
-      <div class="arch-a">&rarr;</div>
-      <div class="arch-n"><span class="num">04</span><h4>Code Generator</h4><p>Trace recorder exporting Playwright scripts, pytest tests, typed functions</p></div>
+    <div class="doc-tabs reveal" id="doc-tabs">
+      <div class="doc-tab active" data-tab="quickstart">Quickstart</div>
+      <div class="doc-tab" data-tab="cli">CLI Reference</div>
+      <div class="doc-tab" data-tab="output">Output Structure</div>
+      <div class="doc-tab" data-tab="llm">LLM Providers</div>
     </div>
 
-    <div class="stats reveal">
-      <div class="stat"><div class="n">11</div><div class="l">Modules</div></div>
-      <div class="stat"><div class="n">4</div><div class="l">Export formats</div></div>
-      <div class="stat"><div class="n">7</div><div class="l">UI strategies detected</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- Docs -->
-<section id="docs">
-  <div class="wrap">
-    <div class="sl reveal">Documentation</div>
-    <div class="st reveal">Get started in 60 seconds</div>
-    <div class="sd reveal">Install, initialize, discover, execute.</div>
-
-    <div class="dg reveal">
-      <div class="dc">
-        <h3>Installation</h3>
-        <p>Python 3.10+ required. Node.js for Playwright browsers.</p>
-        <div class="code"><span class="cm"># Install</span>
-pip install colt-automation
+    <!-- Quickstart -->
+    <div class="doc-panel active" id="tab-quickstart">
+      <div class="doc-grid">
+        <div class="doc-c">
+          <h3>Install</h3>
+          <p>Python 3.10+ and Node.js required.</p>
+          <div class="code"><span class="c"># Install Crawlfr</span>
+pip install crawlfr
 playwright install chromium
 
-<span class="cm"># Set your LLM key</span>
+<span class="c"># Set your LLM key</span>
 export GROQ_API_KEY=your-key-here</div>
-      </div>
-      <div class="dc">
-        <h3>Initialize a Project</h3>
-        <p>Generates config, output directory, installs browsers.</p>
-        <div class="code"><span class="cm"># Interactive setup</span>
-colt init my-app <span class="k">--url</span> <span class="s">http://localhost:3000</span>
+        </div>
+        <div class="doc-c">
+          <h3>Initialize</h3>
+          <p>Generates config, output dirs, installs browsers.</p>
+          <div class="code">crawlfr init my-app \
+  <span class="k">--url</span> <span class="s">http://localhost:3000</span> \
+  <span class="k">--llm</span> groq</div>
+        </div>
+        <div class="doc-c">
+          <h3>Discover</h3>
+          <p>Crawls your app and builds the knowledge base.</p>
+          <div class="code"><span class="c"># Headless</span>
+crawlfr discover
 
-<span class="cm"># With specific LLM</span>
-colt init my-app <span class="k">--url</span> <span class="s">http://localhost:3000</span> <span class="k">--llm</span> openai</div>
-      </div>
-      <div class="dc">
-        <h3>Discover Your App</h3>
-        <p>Crawls the application and builds the knowledge base.</p>
-        <div class="code"><span class="cm"># Headless</span>
-colt discover
-
-<span class="cm"># Watch in browser</span>
-colt discover <span class="k">--no-headless</span>
-
-<span class="cm"># Custom config + depth</span>
-colt discover <span class="k">-c</span> <span class="s">myapp.yaml</span> <span class="k">-d</span> 3</div>
-      </div>
-      <div class="dc">
-        <h3>Execute and Record</h3>
-        <p>Run tasks and export Playwright scripts.</p>
-        <div class="code"><span class="cm"># Execute with ReAct agent</span>
-colt execute <span class="s">"Create admin user"</span> <span class="k">--react</span>
-
-<span class="cm"># Record to script</span>
-colt execute <span class="s">"Create admin user"</span> \
-  <span class="k">--react --record</span> <span class="s">replay.py</span>
-
-<span class="cm"># Generate typed functions</span>
-colt generate <span class="s">automation.py</span></div>
+<span class="c"># Watch in browser</span>
+crawlfr discover <span class="k">--no-headless</span></div>
+        </div>
+        <div class="doc-c">
+          <h3>Execute + Record</h3>
+          <p>Run a task and export a Playwright script.</p>
+          <div class="code">crawlfr execute \
+  <span class="s">"Create admin user"</span> \
+  <span class="k">--react --record</span> <span class="s">replay.py</span></div>
+        </div>
       </div>
     </div>
 
-    <!-- CLI Reference -->
-    <div class="reveal" style="margin-top:36px">
-      <h3 style="font-size:16px;font-weight:700;margin-bottom:14px">CLI Reference</h3>
-      <div class="cli-row"><span class="cli-cmd">colt init &lt;name&gt; --url &lt;url&gt; --llm &lt;provider&gt;</span><span class="cli-desc">Initialize project with config + browser setup</span></div>
-      <div class="cli-row"><span class="cli-cmd">colt discover [-c config.yaml] [--no-headless]</span><span class="cli-desc">Crawl app and build knowledge base</span></div>
-      <div class="cli-row"><span class="cli-cmd">colt execute "task" --react [--record file.py]</span><span class="cli-desc">Execute task with ReAct agent, optionally record</span></div>
-      <div class="cli-row"><span class="cli-cmd">colt generate output.py [--dry-run]</span><span class="cli-desc">Generate typed functions from discovered forms</span></div>
-      <div class="cli-row"><span class="cli-cmd">colt record trace.json output.py --format &lt;fmt&gt;</span><span class="cli-desc">Convert execution log to script / pytest / json / all</span></div>
-      <div class="cli-row"><span class="cli-cmd">colt search "query" [-n 5]</span><span class="cli-desc">Search knowledge base for matching pages</span></div>
+    <!-- CLI -->
+    <div class="doc-panel" id="tab-cli">
+      <div class="cli-row"><span class="cli-cmd">crawlfr init &lt;name&gt; --url &lt;url&gt; --llm &lt;provider&gt;</span><span class="cli-dsc">Initialize project with config and browser setup</span></div>
+      <div class="cli-row"><span class="cli-cmd">crawlfr discover [-c config.yaml] [--no-headless]</span><span class="cli-dsc">Crawl the app and build knowledge base</span></div>
+      <div class="cli-row"><span class="cli-cmd">crawlfr execute "task" --react [--record file.py]</span><span class="cli-dsc">Execute a task with the ReAct agent</span></div>
+      <div class="cli-row"><span class="cli-cmd">crawlfr generate output.py [--dry-run]</span><span class="cli-dsc">Generate typed functions from discovered forms</span></div>
+      <div class="cli-row"><span class="cli-cmd">crawlfr record trace.json output.py --format &lt;fmt&gt;</span><span class="cli-dsc">Convert execution log to script / pytest / json / all</span></div>
+      <div class="cli-row"><span class="cli-cmd">crawlfr search "query" [-n 5]</span><span class="cli-dsc">Search knowledge base for matching app states</span></div>
     </div>
 
+    <!-- Output -->
+    <div class="doc-panel" id="tab-output">
+      <div class="code" style="max-width:520px"><span class="c">crawlfr_output/</span>
+├── discovery/
+│   ├── behavior_map.json
+│   ├── api_schema.json
+│   └── screenshots/
+├── executions/
+│   ├── 2026-02-24_14-30_create_user/
+│   │   ├── execution.json
+│   │   ├── screenshots/
+│   │   │   ├── 01_navigate.png
+│   │   │   ├── 02_click_button.png
+│   │   │   └── completed.png
+│   │   └── replay.py
+│   └── latest -> ...
+└── generated/
+    └── automation.py</div>
+    </div>
 
-
-    <!-- LLM providers -->
-    <div class="reveal" style="margin-top:36px">
-      <h3 style="font-size:16px;font-weight:700;margin-bottom:14px">LLM Providers</h3>
-      <table class="ct llm-t">
+    <!-- LLM -->
+    <div class="doc-panel" id="tab-llm">
+      <table class="cmp llm-t">
         <thead><tr><th>Provider</th><th>Default Model</th><th>Env Variable</th></tr></thead>
         <tbody>
-          <tr><td>Groq</td><td class="mono">llama-3.1-70b-versatile</td><td class="mono">GROQ_API_KEY</td></tr>
-          <tr><td>OpenAI</td><td class="mono">gpt-4o</td><td class="mono">OPENAI_API_KEY</td></tr>
-          <tr><td>Anthropic</td><td class="mono">claude-sonnet-4-20250514</td><td class="mono">ANTHROPIC_API_KEY</td></tr>
-          <tr><td>Ollama</td><td class="mono">llama3.1 (local)</td><td class="mono">--</td></tr>
+          <tr><td>Groq</td><td class="m">llama-3.1-70b-versatile</td><td class="m">GROQ_API_KEY</td></tr>
+          <tr><td>OpenAI</td><td class="m">gpt-4o</td><td class="m">OPENAI_API_KEY</td></tr>
+          <tr><td>Anthropic</td><td class="m">claude-sonnet-4-20250514</td><td class="m">ANTHROPIC_API_KEY</td></tr>
+          <tr><td>Ollama</td><td class="m">llama3.1 (local)</td><td class="m">--</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </section>
 
-<!-- Waitlist -->
-<section class="cta" id="waitlist">
-  <div class="wrap">
+<!-- ══════════ CTA ══════════ -->
+<section class="cta" id="waitlist" style="border-top:1px solid var(--border)">
+  <div class="w">
     <h2 class="reveal">Get early access</h2>
-    <p class="reveal">Launching soon. Join the waitlist to be first.</p>
+    <p class="reveal">We're onboarding teams for closed beta.</p>
     <div class="wl reveal">
-      <input type="email" id="email-input" placeholder="you@company.com" aria-label="Email">
-      <button class="btn btn-primary" onclick="handleWaitlist()">Join Waitlist</button>
+      <input type="email" id="wl-in" placeholder="you@company.com" aria-label="Email">
+      <button class="btn btn-p" onclick="handleWL()">Join Waitlist</button>
     </div>
-    <p id="wl-msg" style="margin-top:10px;font-size:12px;color:var(--green);display:none"></p>
+    <p id="wl-msg"></p>
   </div>
 </section>
 
-<!-- Footer -->
-<footer>
-  <div class="wrap">
-    <div class="footer-inner">
-      <div class="footer-l">COLT &middot; 2026</div>
-      <div class="footer-r">
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="ft">
+  <div class="w">
+    <div class="ft-i">
+      <div class="ft-l">crawlfr &middot; 2026</div>
+      <div class="ft-r">
+        <a href="#usecases">Use Cases</a>
         <a href="#how">How It Works</a>
         <a href="#docs">Docs</a>
-        <a href="#architecture">Architecture</a>
       </div>
     </div>
   </div>
 </footer>
 
+<!-- ══════════ JS ══════════ -->
 <script>
-const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');obs.unobserve(el.target)}})},{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-function handleWaitlist(){const e=document.getElementById('email-input').value;if(!e||!e.includes('@'))return;document.getElementById('wl-msg').textContent="You're on the list.";document.getElementById('wl-msg').style.display='block';document.getElementById('email-input').value=''}
-document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});if(window.innerWidth<768)document.querySelector('.nav-links').style.display='none'})});
+// Nav scroll
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20)});
+
+// Scroll reveal
+const io=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('v');io.unobserve(el.target)}})},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth',block:'start'})})});
+
+// Doc tabs
+document.querySelectorAll('.doc-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.doc-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.doc-panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  })});
+
+// Waitlist
+function handleWL(){
+  const e=document.getElementById('wl-in').value;
+  if(!e||!e.includes('@'))return;
+  const m=document.getElementById('wl-msg');
+  m.textContent="You're on the list.";m.style.display='block';
+  document.getElementById('wl-in').value='';
+}
+
+// Terminal typing animation
+const lines=[
+  {type:'cmd',text:'$ crawlfr discover -c myapp.yaml'},
+  {type:'out',text:'  Crawling http://localhost:3000...'},
+  {type:'out',text:'  47 states | 312 elements | 89 forms mapped'},
+  {type:'gap'},
+  {type:'cmd',text:'$ crawlfr execute "Create admin user with email admin@co.com" --react --record replay.py'},
+  {type:'out',text:'  ReAct: 8 steps | 12.3s'},
+  {type:'out',text:'  Task complete — saved to replay.py'},
+  {type:'gap'},
+  {type:'cmd',text:'$ python replay.py'},
+  {type:'out',text:'  Standalone script — runs without Crawlfr'},
+];
+const tb=document.getElementById('term-b');
+let li=0,ci=0,cur=null;
+function typeLine(){
+  if(li>=lines.length){setTimeout(()=>{tb.innerHTML='';li=0;ci=0;typeLine()},3000);return}
+  const ln=lines[li];
+  if(ln.type==='gap'){li++;setTimeout(typeLine,400);return}
+  if(!cur){cur=document.createElement('span');cur.className='ln';cur.style.animationDelay='0s';
+    cur.style.opacity='1';tb.appendChild(cur)}
+  if(ci<ln.text.length){
+    const ch=ln.text[ci];
+    if(ci===0&&ln.type==='cmd')cur.innerHTML='<span class="pr">$</span> ';
+    else if(ci===0&&ln.type==='out')cur.innerHTML='';
+    if(ln.type==='cmd'&&ci>1){
+      // Color code parts
+      const sofar=ln.text.substring(2,ci+1);
+      const parts=sofar.replace(/(--[\w-]+)/g,'<span class="fl">$1</span>')
+        .replace(/(".*?")/g,'<span class="st">$1</span>')
+        .replace(/(-c|-d)\b/g,'<span class="fl">$1</span>');
+      cur.innerHTML='<span class="pr">$</span> <span class="cm">'+parts+'</span>';
+    }else if(ln.type==='out'){
+      cur.innerHTML='<span class="ou">'+ln.text.substring(0,ci+1)+'</span>';
+    }
+    ci++;
+    setTimeout(typeLine,ln.type==='cmd'?28:12);
+  }else{
+    cur.innerHTML+='\n';cur=null;ci=0;li++;
+    setTimeout(typeLine,ln.type==='cmd'?500:200);
+  }
+}
+setTimeout(typeLine,800);
 </script>
 </body>
 </html>
