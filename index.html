@@ -377,13 +377,6 @@ await create_user(email=<span class="s">"a@co.com"</span>, role=<span class="s">
         </ul>
       </div>
     </div>
-
-    <div class="st-bar reveal">
-      <div class="st-i"><div class="n">13K+</div><div class="l">Lines of Python</div></div>
-      <div class="st-i"><div class="n">11</div><div class="l">Modules</div></div>
-      <div class="st-i"><div class="n">4</div><div class="l">Export formats</div></div>
-      <div class="st-i"><div class="n">7</div><div class="l">UI detection strategies</div></div>
-    </div>
   </div>
 </section>
 
@@ -416,7 +409,6 @@ await create_user(email=<span class="s">"a@co.com"</span>, role=<span class="s">
     <div class="doc-tabs reveal" id="doc-tabs">
       <div class="doc-tab active" data-tab="quickstart">Quickstart</div>
       <div class="doc-tab" data-tab="cli">CLI Reference</div>
-      <div class="doc-tab" data-tab="output">Output Structure</div>
       <div class="doc-tab" data-tab="llm">LLM Providers</div>
     </div>
 
@@ -467,26 +459,6 @@ colt discover <span class="k">--no-headless</span></div>
       <div class="cli-row"><span class="cli-cmd">colt generate output.py [--dry-run]</span><span class="cli-dsc">Generate typed functions from discovered forms</span></div>
       <div class="cli-row"><span class="cli-cmd">colt record trace.json output.py --format &lt;fmt&gt;</span><span class="cli-dsc">Convert execution log to script / pytest / json / all</span></div>
       <div class="cli-row"><span class="cli-cmd">colt search "query" [-n 5]</span><span class="cli-dsc">Search knowledge base for matching app states</span></div>
-    </div>
-
-    <!-- Output -->
-    <div class="doc-panel" id="tab-output">
-      <div class="code" style="max-width:520px"><span class="c">colt_output/</span>
-├── discovery/
-│   ├── behavior_map.json
-│   ├── api_schema.json
-│   └── screenshots/
-├── executions/
-│   ├── 2026-02-24_14-30_create_user/
-│   │   ├── execution.json
-│   │   ├── screenshots/
-│   │   │   ├── 01_navigate.png
-│   │   │   ├── 02_click_button.png
-│   │   │   └── completed.png
-│   │   └── replay.py
-│   └── latest -> ...
-└── generated/
-    └── automation.py</div>
     </div>
 
     <!-- LLM -->
